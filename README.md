@@ -2,6 +2,8 @@
 
 Draw a maze into an HTML Canvas.
 
+[![Node.js CI](https://github.com/mckoss/maze-canvas/actions/workflows/main.yml/badge.svg)](https://github.com/mckoss/maze-canvas/actions/workflows/main.yml)
+
 # API
 
 ```
@@ -30,7 +32,7 @@ drawMaze(maze, canvas, options )
 
 </td></tr>
 
-<tr><td>options</th><td>
+<tr><th>options</th><td>
 Options are passed in a JSON Object, default values as shown:
 
 ```
@@ -63,4 +65,4 @@ L_|
 ||_|
 L_L_
 ```
-
+</td></tr></table>
