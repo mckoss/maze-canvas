@@ -1,17 +1,38 @@
 export { tuples, Maze, Direction };
 
 enum Direction {
-    up, right, down, left
+    up = 0, right = 1, down = 2, left = 3
 }
 
-// Differential in column cells and row cells.
+function oppositeDir(dir: Direction): Direction {
+    return (dir + 2) % 4;
+}
+
+// Differential in row cells and column cells.
 const dcell: [number, number][] = [
-    [0, -1], [1, 0], [0, 1], [-1, 0]
+    [-1, 0], [0, 1], [1, 0], [0, -1]
 ];
+
+class MazeCount {
+    sym1: number;
+    sym2: number;
+    sym4: number;
+    sym8: number;
+
+    constructor() {
+        this.sym1 = 0;
+        this.sym2 = 0;
+        this.sym4 = 0;
+        this.sym8 = 0;
+    }
+}
 
 class Maze {
     rows: number;
     cols: number;
+
+    // 1, 2, 4, or 8
+    symmetries: number = 1;
 
     // Cells contains a partition index.
     cells: number[];
@@ -34,14 +55,18 @@ class Maze {
 
     *allMazesFromRow(row: number): Generator<Maze> {
         for (let verticals of this.forAllVerticalWalls()) {
-            //here
-            console.log(verticals);
+            copyTo(this.walls, this.wallIndex(row, 0, Direction.right),
+                verticals);
             if (row < this.rows - 1) {
                 for (let horizontals of this.forAllHorizontalWalls()) {
+                    copyTo(this.walls, this.wallIndex(row, 0, Direction.down),
+                        horizontals);
                     yield *this.allMazesFromRow(row + 1);
                 }
             } else {
-                yield this;
+                if (this.allHaveSingleExit(row)) {
+                    yield this;
+                }
             }
         }
     }
@@ -60,6 +85,23 @@ class Maze {
 
     cellIndex(row: number, col: number): number {
         return row * this.cols + col;
+    }
+
+    neighborIndex(row: number, col: number, dir: Direction): number {
+        row += dcell[dir][0];
+        col += dcell[dir][1];
+        if (row < 0 || row >= this.rows || col < 0 || col >= this.cols) {
+            return -1;
+        }
+        return this.cellIndex(row, col);
+    }
+
+    hasWall(row: number, col: number, dir: Direction): boolean {
+        const iWall = this.wallIndex(row, col, dir);
+        if (iWall === -1) {
+            return true;
+        }
+        return this.walls[iWall];
     }
 
     wallIndex(row: number, col:  number, dir: Direction): number {
@@ -84,6 +126,51 @@ class Maze {
 
         return result;
     }
+
+    allHaveSingleExit(lastRow: number): boolean {
+        let exitableCount = 0;
+        let allCount = this.cellIndex(lastRow + 1, 0);
+        let distances = new Array(allCount).fill(-1);
+        // row, col, and fromDir
+        let stack: [number, number, number][] = [];
+
+        for (let col = 0; col < this.cols; col++) {
+            if (!this.hasWall(lastRow, col, Direction.down)) {
+                distances[this.cellIndex(lastRow, col)] = 0;
+                exitableCount++;
+                stack.push([lastRow, col, Direction.down]);
+            }
+        }
+
+        while (stack.length > 0) {
+            const [row, col, fromDir] = stack.pop()!;
+            const icell = this.cellIndex(row, col);
+            const dist = distances[icell];
+            for (let dir = 0; dir < 4; dir++) {
+                if (dir === fromDir) {
+                    continue;
+                }
+
+                const icellNext = this.neighborIndex(row, col, dir);
+                if (icellNext === -1) {
+                    continue;
+                }
+
+                const distNext = distances[icellNext];
+
+                // Found a multi-path exit.
+                if (distNext !== -1) {
+                    return false;
+                }
+
+                distances[icellNext] = dist + 1;
+                exitableCount++;
+                stack.push([row, col, oppositeDir(dir)]);
+            }
+        }
+
+        return exitableCount === allCount;
+    }
 }
 
 function *tuples(maxValue: number, values: number): Generator<number[]> {
@@ -102,5 +189,8 @@ function *tuples(maxValue: number, values: number): Generator<number[]> {
     }
 }
 
-// Count the number of mazes of size N.
-
+function copyTo(dest: any[], iDest: number, src: any[]): void {
+    for (let i = 0; i < src.length; i++) {
+        dest[iDest + i] = src[i];
+    }
+}

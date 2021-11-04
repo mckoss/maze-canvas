@@ -17,6 +17,31 @@ suite("Maze", () => {
         assert.equal(maze.cellIndex(1, 1), 5);
     });
 
+    test("neighborIndex", () => {
+        const tests: [[number, number, Direction], number][] = [
+            [ [0, 0, Direction.right], 1 ],
+            [ [0, 1, Direction.right], 2 ],
+            [ [0, 0, Direction.down], 4 ],
+            [ [0, 1, Direction.down], 5 ],
+            [ [1, 0, Direction.right], 5 ],
+            [ [1, 1, Direction.right], 6 ],
+            [ [1, 0, Direction.down], 8 ],
+
+            [ [0, 0, Direction.left], -1 ],
+            [ [0, 1, Direction.left], 0 ],
+            [ [0, 0, Direction.up], -1 ],
+            [ [0, 1, Direction.up], -1 ],
+            [ [1, 0, Direction.left], -1 ],
+            [ [1, 1, Direction.left], 4 ],
+            [ [1, 0, Direction.up], 0 ],
+        ];
+
+        const maze = new Maze(4, 4);
+        for (let test of tests) {
+            assert.equal(maze.neighborIndex(...test[0]), test[1], `${test[0]}`);
+        }
+    });
+
     test("wallIndex", () => {
         const tests: [[number, number, Direction], number][] = [
             [ [0, 0, Direction.right], 0 ],
@@ -35,6 +60,7 @@ suite("Maze", () => {
             [ [1, 1, Direction.left], 7 ],
             [ [1, 0, Direction.up], 3 ],
         ];
+
         const maze = new Maze(4, 4);
         for (let test of tests) {
             assert.equal(maze.wallIndex(...test[0]), test[1], `${test[0]}`);
