@@ -1,45 +1,89 @@
-export { tuples };
+export { tuples, Maze, Direction };
 
-class Cell {
-    right: boolean = false;
-    bottom: boolean = false;
-    partition: number = 0;
+enum Direction {
+    up, right, down, left
 }
 
-function *mazes(rows: number, cols: number): Generator<Cell[][]> {
-    let mazeRows: Cell[][] = [];
+// Differential in column cells and row cells.
+const dcell: [number, number][] = [
+    [0, -1], [1, 0], [0, 1], [-1, 0]
+];
 
-    yield *generateFromRow(0, rows, cols, mazeRows);
-}
+class Maze {
+    rows: number;
+    cols: number;
 
-function* generateFromRow(row: number, rows: number, cols: number,
-    mazeRows: Cell[][]): Generator<Cell[][]> {
+    // Cells contains a partition index.
+    cells: number[];
 
-    for (let cells of allPossibleRows(cols, row === rows - 1)) {
-        mazeRows.push(cells);
-        if (isViable(cells, row > 0 ? mazeRows[row - 1] : null)) {
-            if (row === rows - 1) {
-                yield mazeRows;
+    // Walls are in row-major order beginning with
+    // vertical walls in the first row, and alternating
+    // between the vertical and horizontal walls of the maze.
+    walls: boolean[];
+
+    constructor(rows: number, cols: number) {
+        this.rows = rows;
+        this.cols = cols;
+        this.cells = new Array(rows * cols).fill(0);
+        this.walls = new Array(rows * (cols - 1) + cols * (rows - 1)).fill(false);
+    }
+
+    *allMazes(): Generator<Maze> {
+        yield *this.allMazesFromRow(0);
+    }
+
+    *allMazesFromRow(row: number): Generator<Maze> {
+        for (let verticals of this.forAllVerticalWalls()) {
+            //here
+            console.log(verticals);
+            if (row < this.rows - 1) {
+                for (let horizontals of this.forAllHorizontalWalls()) {
+                    yield *this.allMazesFromRow(row + 1);
+                }
             } else {
-                yield *generateFromRow(row + 1, rows, cols, mazeRows);
+                yield this;
             }
         }
     }
-}
 
-function *allPossibleRows(cols: number, bottomRow: boolean): Generator<Cell[]> {
-    let cells = Array.from({ length: cols}, () => new Cell());
-}
+    *forAllVerticalWalls(): Generator<boolean[]> {
+        for (let t of tuples(2, this.cols - 1)) {
+            yield t.map(x => x !== 0);
+        }
+    }
 
-// Return true if this row is viable.
-// If any cells are totall enclosed - it is not viable.
-// Modifiy the row with partition numbers - collapsing to the lowest
-// number possible.
-// The last row must collapse to a single partition.
-// Any stranded partition (one without any hope of reaching the last
-// row) also makes a partition non-viable.
-function isViable(cells: Cell[], priorCells: Cell[] | null): boolean {
-    return false;
+    *forAllHorizontalWalls(): Generator<boolean[]> {
+        for (let t of tuples(2, this.cols)) {
+            yield t.map(x => x !== 0);
+        }
+    }
+
+    cellIndex(row: number, col: number): number {
+        return row * this.cols + col;
+    }
+
+    wallIndex(row: number, col:  number, dir: Direction): number {
+        // Each row has cols - 1 vertical walls and cols horizontal walls.
+        if (dir === Direction.up) {
+            row--;
+            dir = Direction.down;
+        } else if (dir === Direction.left) {
+            col--;
+            dir = Direction.right;
+        }
+
+        if (row < 0 || col < 0 || row > this.rows - 1 || col > this.cols - 1) {
+            return -1;
+        }
+
+        let result = row * (2 * this.cols - 1) + col;
+
+        if (dir === Direction.down) {
+            result += this.cols - 1;
+        }
+
+        return result;
+    }
 }
 
 function *tuples(maxValue: number, values: number): Generator<number[]> {
@@ -57,3 +101,6 @@ function *tuples(maxValue: number, values: number): Generator<number[]> {
         t.pop();
     }
 }
+
+// Count the number of mazes of size N.
+
