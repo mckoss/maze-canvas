@@ -1,4 +1,4 @@
-export { tuples, Maze, Direction };
+export { tuples, Maze, Direction, oppositeDir };
 
 enum Direction {
     up = 0, right = 1, down = 2, left = 3
@@ -41,16 +41,22 @@ class Maze {
     // vertical walls in the first row, and alternating
     // between the vertical and horizontal walls of the maze.
     walls: boolean[];
+    readonly completeWalls: number;
 
     constructor(rows: number, cols: number) {
         this.rows = rows;
         this.cols = cols;
+        this.completeWalls = rows * cols - rows - cols + 1;
         this.cells = new Array(rows * cols).fill(0);
         this.walls = new Array(rows * (cols - 1) + cols * (rows - 1)).fill(false);
     }
 
     *allMazes(): Generator<Maze> {
         yield *this.allMazesFromRow(0);
+    }
+
+    get numWalls() : number {
+        return this.walls.reduce((acc, cur) => acc + (cur ? 1 : 0), 0);
     }
 
     *allMazesFromRow(row: number): Generator<Maze> {
@@ -64,7 +70,10 @@ class Maze {
                     yield *this.allMazesFromRow(row + 1);
                 }
             } else {
-                if (this.allHaveSingleExit(row)) {
+                // All connected mazes with the correct number of walls contain
+                // no loops.
+                console.log(this.allHaveExit(row), this.numWalls);
+                if (this.allHaveExit(row) && this.numWalls === this.completeWalls) {
                     yield this;
                 }
             }
@@ -96,7 +105,7 @@ class Maze {
         return this.cellIndex(row, col);
     }
 
-    setWall(row: number, col: number, dir: Direction, value: boolean) {
+    setWall(row: number, col: number, dir: Direction, value = true) {
         const index = this.wallIndex(row, col, dir);
         if (index === -1) {
             return;
@@ -116,64 +125,68 @@ class Maze {
         // Each row has cols - 1 vertical walls and cols horizontal walls.
         if (dir === Direction.up) {
             row--;
+            if (row < 0) {
+                return -1;
+            }
             dir = Direction.down;
         } else if (dir === Direction.left) {
             col--;
+            if (col < 0) {
+                return -1;
+            }
             dir = Direction.right;
         }
 
-        if (row < 0 || col < 0 || row > this.rows - 1 || col > this.cols - 1) {
+        if (row === this.rows - 1 && dir === Direction.down) {
             return -1;
         }
 
-        let result = row * (2 * this.cols - 1) + col;
-
-        if (dir === Direction.down) {
-            result += this.cols - 1;
+        if (col === this.cols - 1 && dir === Direction.right) {
+            return -1;
         }
 
-        return result;
+        let index = row * (2 * this.cols - 1) + col;
+
+        if (dir === Direction.down) {
+            index += this.cols - 1;
+        }
+
+        return index;
     }
 
-    allHaveSingleExit(lastRow: number): boolean {
+    allHaveExit(lastRow: number): boolean {
         let exitableCount = 0;
         let allCount = this.cellIndex(lastRow + 1, 0);
         let distances = new Array(allCount).fill(-1);
-        // row, col, and fromDir
-        let stack: [number, number, number][] = [];
+        // row, col
+        let stack: [number, number][] = [];
 
         for (let col = 0; col < this.cols; col++) {
-            if (!this.hasWall(lastRow, col, Direction.down)) {
+            if (lastRow === this.rows - 1 ||
+                !this.hasWall(lastRow, col, Direction.down)) {
                 distances[this.cellIndex(lastRow, col)] = 0;
                 exitableCount++;
-                stack.push([lastRow, col, Direction.down]);
+                stack.push([lastRow, col]);
             }
         }
 
         while (stack.length > 0) {
-            const [row, col, fromDir] = stack.pop()!;
+            const [row, col] = stack.pop()!;
             const icell = this.cellIndex(row, col);
             const dist = distances[icell];
             for (let dir = 0; dir < 4; dir++) {
-                if (dir === fromDir) {
+                if (this.hasWall(row, col, dir) || row + dcell[dir][0] > lastRow) {
                     continue;
                 }
 
                 const icellNext = this.neighborIndex(row, col, dir);
-                if (icellNext === -1) {
+                if (icellNext === -1 || distances[icellNext] !== -1) {
                     continue;
-                }
-
-                const distNext = distances[icellNext];
-
-                // Found a multi-path exit.
-                if (distNext !== -1) {
-                    return false;
                 }
 
                 distances[icellNext] = dist + 1;
                 exitableCount++;
-                stack.push([row, col, oppositeDir(dir)]);
+                stack.push([row + dcell[dir][0], col + dcell[dir][1]]);
             }
         }
 

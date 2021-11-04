@@ -1,8 +1,20 @@
 import { assert } from "chai";
 
-import { tuples, Maze, Direction } from "../maze-generator.js";
+import { tuples, Maze, Direction, oppositeDir } from "../maze-generator.js";
 
 suite("Maze", () => {
+    test("oppositeDir", () => {
+        const tests = [
+            [ Direction.up, Direction.down ],
+            [ Direction.right, Direction.left ],
+        ];
+
+        for (let test of tests) {
+            assert.equal(oppositeDir(test[0]), test[1]);
+            assert.equal(oppositeDir(test[1]), test[0]);
+        }
+    });
+
     test("constructor", () => {
         const maze = new Maze(4, 4);
         assert.equal(maze.cols, 4);
@@ -70,8 +82,12 @@ suite("Maze", () => {
     test("setWall / hasWall", () => {
         const maze = new Maze(4, 4);
 
+        assert.equal(maze.numWalls, 0);
+
         maze.setWall(1, 0, Direction.right, true);
         maze.setWall(1, 1, Direction.down, true);
+
+        assert.equal(maze.numWalls, 2);
 
         const tests: [[number, number, Direction], boolean][] = [
             [ [0, 0, Direction.up], true ],
@@ -93,6 +109,11 @@ suite("Maze", () => {
             [ [1, 1, Direction.right], false ],
             [ [1, 1, Direction.down], true ],
             [ [1, 1, Direction.left], true ],
+
+            [ [0, 3, Direction.right], true ],
+            [ [1, 3, Direction.right], true ],
+            [ [3, 0, Direction.down], true ],
+            [ [3, 3, Direction.down], true ],
         ];
 
         for (let test of tests) {
@@ -159,8 +180,28 @@ suite("Maze", () => {
                 console.log(m);
                 count++;
             }
-            assert.equal(count, 1);
+            assert.equal(count, 4);
         }
+    });
+
+    test("allHaveExit", () => {
+        const maze = new Maze(1, 1);
+        assert.equal(maze.allHaveExit(0), true);
+
+        const maze2 = new Maze(2, 2);
+        assert.equal(maze2.allHaveExit(0), true);
+
+        maze2.setWall(0, 0, Direction.right, true);
+        assert.equal(maze2.allHaveExit(0), true);
+        assert.equal(maze2.allHaveExit(1), true);
+
+        maze2.setWall(0, 1, Direction.down, true);
+        assert.equal(maze2.allHaveExit(0), false);
+        assert.equal(maze2.allHaveExit(1), false);
+
+        maze2.setWall(0, 0, Direction.right, false);
+        assert.equal(maze2.allHaveExit(0), true, JSON.stringify(maze2));
+        assert.equal(maze2.allHaveExit(1), true, JSON.stringify(maze2));
     });
 });
 
