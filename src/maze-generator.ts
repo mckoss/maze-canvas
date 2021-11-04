@@ -70,10 +70,7 @@ class Maze {
                     yield *this.allMazesFromRow(row + 1);
                 }
             } else {
-                // All connected mazes with the correct number of walls contain
-                // no loops.
-                console.log(this.allHaveExit(row), this.numWalls);
-                if (this.allHaveExit(row) && this.numWalls === this.completeWalls) {
+                if (this.uniquelyConnected()) {
                     yield this;
                 }
             }
@@ -191,6 +188,65 @@ class Maze {
         }
 
         return exitableCount === allCount;
+    }
+
+    uniquelyConnected(): boolean {
+        const visited = new Array(this.cells.length).fill(false);
+        let count = 0;
+        const stack: [number, number, Direction][] = [];
+
+        // Pretend we're starting from above the maze.
+        stack.push([0, 0, Direction.up]);
+        visited[0] = true;
+        count++;
+
+        while (stack.length > 0) {
+            const [row, col, fromDir] = stack.pop()!;
+            const index = this.cellIndex(row, col);
+            for (let dir = 0; dir < 4; dir++) {
+                if (fromDir === dir || this.hasWall(row, col, dir)) {
+                    continue;
+                }
+                const indexNeighbor = this.neighborIndex(row, col, dir);
+                if (indexNeighbor !== -1) {
+                    if (visited[indexNeighbor]) {
+                        return false;
+                    }
+                    stack.push([row + dcell[dir][0], col + dcell[dir][1],
+                        oppositeDir(dir)]);
+                    visited[indexNeighbor] = true;
+                    count++;
+                }
+            }
+        }
+
+        return count === this.cells.length;
+    }
+
+    toString(): string {
+        let result = '';
+        result += '.' + '_.'.repeat(this.cols) + '\n';
+
+        for (let row = 0; row < this.rows; row++) {
+            result += '|';
+            for (let col = 0; col < this.cols; col++) {
+                if (this.hasWall(row, col, Direction.right)) {
+                    result += ' |';
+                } else {
+                    result += '  ';
+                }
+            }
+            result += '\n.';
+            for (let col = 0; col < this.cols; col++) {
+                if (this.hasWall(row, col, Direction.down)) {
+                    result += '_.';
+                } else {
+                    result += ' .';
+                }
+            }
+            result += '\n';
+        }
+        return result;
     }
 }
 

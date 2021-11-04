@@ -171,16 +171,17 @@ suite("Maze", () => {
         const tests: [[number, number], number][] = [
             [ [1, 1], 1],
             [ [2, 2], 4],
+            [ [3, 3], 192],
         ];
 
         for (let test of tests) {
             const maze = new Maze(...test[0]);
             let count = 0;
             for (let m of maze.allMazes()) {
-                console.log(m);
+                // console.log(m.toString());
                 count++;
             }
-            assert.equal(count, 4);
+            assert.equal(count, test[1]);
         }
     });
 
@@ -202,6 +203,24 @@ suite("Maze", () => {
         maze2.setWall(0, 0, Direction.right, false);
         assert.equal(maze2.allHaveExit(0), true, JSON.stringify(maze2));
         assert.equal(maze2.allHaveExit(1), true, JSON.stringify(maze2));
+
+        let maze3 = new Maze(3, 3);
+        maze3.setWall(0, 1, Direction.down);
+        maze3.setWall(1, 1, Direction.down);
+        maze3.setWall(1, 2, Direction.down);
+        maze3.setWall(2, 0, Direction.right);
+        for (let row of [0, 1, 2]) {
+            assert.equal(maze3.allHaveExit(row), true);
+        }
+    });
+
+    test("uniquelyConnected", () => {
+        let maze3 = new Maze(3, 3);
+        maze3.setWall(0, 1, Direction.down);
+        maze3.setWall(1, 1, Direction.down);
+        maze3.setWall(1, 2, Direction.down);
+        maze3.setWall(2, 0, Direction.right);
+        assert.equal(maze3.uniquelyConnected(), false);
     });
 });
 
