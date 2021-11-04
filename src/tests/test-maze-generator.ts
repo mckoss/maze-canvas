@@ -67,6 +67,39 @@ suite("Maze", () => {
         }
     });
 
+    test("setWall / hasWall", () => {
+        const maze = new Maze(4, 4);
+
+        maze.setWall(1, 0, Direction.right, true);
+        maze.setWall(1, 1, Direction.down, true);
+
+        const tests: [[number, number, Direction], boolean][] = [
+            [ [0, 0, Direction.up], true ],
+            [ [0, 0, Direction.right], false ],
+            [ [0, 0, Direction.down], false ],
+            [ [0, 0, Direction.left], true ],
+
+            [ [0, 1, Direction.up], true ],
+            [ [0, 1, Direction.right], false ],
+            [ [0, 1, Direction.down], false ],
+            [ [0, 1, Direction.left], false ],
+
+            [ [1, 0, Direction.up], false ],
+            [ [1, 0, Direction.right], true ],
+            [ [1, 0, Direction.down], false ],
+            [ [1, 0, Direction.left], true ],
+
+            [ [1, 1, Direction.up], false ],
+            [ [1, 1, Direction.right], false ],
+            [ [1, 1, Direction.down], true ],
+            [ [1, 1, Direction.left], true ],
+        ];
+
+        for (let test of tests) {
+            assert.equal(maze.hasWall(...test[0]), test[1], `${test[0]}`);
+        }
+    });
+
     test("forAllVerticalWalls", () => {
         const maze = new Maze(4, 4);
         const expected = [
@@ -154,6 +187,4 @@ suite("iterators", () => {
             assert.equal(i, t[1].length, `Expected ${t[1].length} tuples (only got ${i})`);
         }
     });
-
 });
-

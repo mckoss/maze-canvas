@@ -8,7 +8,7 @@ function oppositeDir(dir: Direction): Direction {
     return (dir + 2) % 4;
 }
 
-// Differential in row cells and column cells.
+// Differential index in row cells and column cells.
 const dcell: [number, number][] = [
     [-1, 0], [0, 1], [1, 0], [0, -1]
 ];
@@ -96,12 +96,20 @@ class Maze {
         return this.cellIndex(row, col);
     }
 
+    setWall(row: number, col: number, dir: Direction, value: boolean) {
+        const index = this.wallIndex(row, col, dir);
+        if (index === -1) {
+            return;
+        }
+        this.walls[index] = value;
+    }
+
     hasWall(row: number, col: number, dir: Direction): boolean {
-        const iWall = this.wallIndex(row, col, dir);
-        if (iWall === -1) {
+        const index = this.wallIndex(row, col, dir);
+        if (index === -1) {
             return true;
         }
-        return this.walls[iWall];
+        return this.walls[index];
     }
 
     wallIndex(row: number, col:  number, dir: Direction): number {
