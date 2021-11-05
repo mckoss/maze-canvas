@@ -14,8 +14,7 @@ for (let arg of args) {
         if (arg.slice(2) === 'sym') {
             showSym = true;
         } else {
-            console.error(`Unknown option: ${arg}`);
-            help
+            help(`Unknown option: ${arg}`);
         }
     } else {
         let value = parseInt(arg);
@@ -81,8 +80,8 @@ function help(err?: string) {
 
     console.log("\nUsage: count-mazes.js [--sym] <rows> [<cols>]");
     console.log(" --sym: Print all symmetrical mazes.");
-    console.log(" <rows>: Number of rows in the maze (and cols if not given)");
-    console.log(" <cols>: Number of columns in the maze");
+    console.log(" <rows>: Number of rows in the maze");
+    console.log(" <cols>: Number of columns in the maze (same as rows if not given)");
     process.exit(1);
 }
 
