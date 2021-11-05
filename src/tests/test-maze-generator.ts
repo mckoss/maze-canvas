@@ -209,6 +209,29 @@ suite("Maze", () => {
         maze3.setWall(2, 0, Direction.right);
         assert.equal(maze3.uniquelyConnected(), false);
     });
+
+    test("reflect", () => {
+        const maze = new Maze(3, 3);
+
+        const tests: [[number, number, Direction], [number, number, Direction]][] = [
+            [ [0, 0, Direction.right], [0, 2, Direction.left] ],
+            [ [0, 0, Direction.down], [0, 2, Direction.down] ],
+        ];
+        // todo: Test against indices here!
+        for (let test of tests) {
+            assert.deepEqual(maze.reflect(...test[0]), test[1]);
+        }
+    });
+
+    test("transforms", () => {
+        const maze = new Maze(1, 1);
+        assert.equal(maze.transforms.length, 7);
+        assert.deepEqual(maze.transforms, [[],[],[],[],[],[],[]]);
+
+        const maze2 = new Maze(2, 2);
+        assert.equal(maze2.transforms.length, 7);
+        console.log(maze2.transforms);
+    });
 });
 
 suite("misc", () => {

@@ -90,11 +90,11 @@ class Maze {
         if (this.rows !== this.cols) {
             throw new Error('Cannot rotate non-square maze');
         }
-        return [col, this.rows - row, rotateDir(dir)];
+        return [col, this.rows - row - 1, rotateDir(dir)];
     }
 
     reflect(row: number, col: number, dir:Direction): [number, number, Direction] {
-        return [col, row, reflectDir(dir)];
+        return [row, this.cols - col - 1, reflectDir(dir)];
     }
 
     countMazes(): number {
