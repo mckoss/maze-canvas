@@ -58,14 +58,16 @@ const counts = maze.countMazes();
 const elapsedSeconds = hrSeconds(hrtime(startTime));
 
 console.log(`There are ${counts.total.toLocaleString()} mazes of size ${rows}x${cols}.`);
-console.log(`${counts.unique.toLocaleString()} are unique.`);
+console.log(`${counts.unique.toLocaleString()} are unique:`);
+console.log('---')
 console.log(`${counts.symCounts["1"].toLocaleString()} are not symmetric.`);
 console.log(`${counts.symCounts["2"].toLocaleString()} have 2-way symmetry.`);
 console.log(`${counts.symCounts["4"]} have 4-way symmetry.`);
 console.log(`${counts.symCounts["8"]} have 8-way symmetry.`);
 
-console.log(`Elapsed time: ${elapsedSeconds.toFixed(2)}s`);
 console.log(`\nOne in ${(candidates/counts.total).toFixed(2)} of the wall placements are valid mazes.`);
+
+console.log(`---\nElapsed time: ${elapsedSeconds.toFixed(2)}s`);
 console.log(`${Math.floor(counts.total/elapsedSeconds).toLocaleString()} mazes per second.`);
 
 function hrSeconds(hrtime: [number, number]) {
