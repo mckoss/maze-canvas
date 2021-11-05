@@ -148,9 +148,14 @@ class Maze {
             total++;
             symCounts[m.symmetry!] += 1;
         }
-        // Remove the duplicates from the generated mazes.
-        const unique = total - symCounts["2"] - 3 * symCounts["4"] -
-            7 * symCounts["8"];
+
+        // Remove duplicated counts from symCounts
+        symCounts["1"] /= 8;
+        symCounts["2"] /= 4;
+        symCounts["4"] /= 2;
+
+        let unique = symCounts["1"] + symCounts["2"] + symCounts["4"] + symCounts["8"];
+
         return { total, unique, symCounts };
     }
 

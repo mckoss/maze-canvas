@@ -172,17 +172,20 @@ suite("Maze", () => {
         assert.equal(i, expected.length);
     });
 
-    test("allMazes", () => {
-        const tests: [[number, number], number][] = [
-            [ [1, 1], 1],
-            [ [2, 2], 4],
-            [ [3, 3], 192],
+    test("countMazes", () => {
+        const tests: [[number, number], MazeCount][] = [
+            [ [1, 1], { total: 1, unique: 1,
+                symCounts: {"1": 0, "2": 0, "4": 0, "8": 1}}],
+            [ [2, 2], { total: 4, unique: 1,
+                symCounts: {"1": 0, "2": 1, "4": 0, "8": 0}}],
+            [ [3, 3], { total: 192, unique: 28,
+                symCounts: {"1": 21, "2": 5, "4": 2, "8": 0}}],
             // [ [4, 4], 100352],
         ];
 
         for (let test of tests) {
             const maze = new Maze(...test[0]);
-            assert.equal(maze.countMazes().total, test[1]);
+            assert.deepEqual(maze.countMazes(), test[1], `${test[0]}: ${JSON.stringify(maze.countMazes(), undefined, 4)}`);
         }
     });
 
