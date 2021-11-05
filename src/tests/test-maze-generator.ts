@@ -1,6 +1,6 @@
 import { assert } from "chai";
 
-import { tuples, Maze, MazeCount, Direction, TESTING }
+import { tuples, Maze, MazeCount, Direction, pluralize, TESTING }
 from "../maze-generator.js";
 
 const { compose, oppositeDir, rotateDir, reflectHDir, reflectVDir } = TESTING;
@@ -180,6 +180,10 @@ suite("Maze", () => {
                 symCounts: {"1": 0, "2": 1, "4": 0, "8": 0}}],
             [ [3, 3], { total: 192, unique: 28,
                 symCounts: {"1": 21, "2": 5, "4": 2, "8": 0}}],
+            [ [1, 2], { total: 1, unique: 1,
+                symCounts: {"1": 0, "2": 0, "4": 1, "8": 0}}],
+            [ [2, 3], { total: 15, unique: 6,
+                symCounts: {"1": 2, "2": 3, "4": 1, "8": 0}}],
             // [ [4, 4], 100352],
         ];
 
@@ -384,6 +388,22 @@ suite("misc", () => {
         ];
         for (let test of tests) {
             assert.deepEqual(compose(...test[0]), test[1], `${test}`);
+        }
+    });
+
+    test("pluralize", () => {
+        const tests: [[number, string, string?], string][] = [
+            [[1, "thing"], "1 thing"],
+            [[0, "thing"], "0 things"],
+            [[2, "thing"], "2 things"],
+            [[0, "has", "have"], "0 have"],
+            [[1, "has", "have"], "1 has"],
+            [[2, "has", "have"], "2 have"],
+            [[10000, "cookie"], "10,000 cookies"],
+        ];
+
+        for (let test of tests) {
+            assert.equal(pluralize(...test[0]), test[1], `${test}`);
         }
     });
 });

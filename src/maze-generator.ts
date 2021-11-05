@@ -1,4 +1,4 @@
-export { tuples, Maze, MazeCount, Direction, TESTING };
+export { tuples, Maze, MazeCount, Direction, pluralize, TESTING };
 
 // Exposed for testing - not part of the public API.
 const TESTING = { compose, oppositeDir, rotateDir, reflectHDir, reflectVDir };
@@ -82,10 +82,12 @@ class Maze {
         this.calcTransforms();
     }
 
-    calcTransforms(): void {
-        let isSquare = this.rows === this.cols;
+    get isSquare(): boolean {
+        return this.rows === this.cols;
+    }
 
-        if (isSquare) {
+    calcTransforms(): void {
+        if (this.isSquare) {
             let r1: number[] = [];
             let horiz: number[] = [];
             for (let coords of this.allWallCoords()) {
@@ -144,15 +146,20 @@ class Maze {
             "8": 0
         };
 
-        for (let m of this.allMazes(this.rows === this.cols)) {
+        for (let m of this.allMazes(true)) {
             total++;
             symCounts[m.symmetry!] += 1;
         }
 
         // Remove duplicated counts from symCounts
-        symCounts["1"] /= 8;
-        symCounts["2"] /= 4;
-        symCounts["4"] /= 2;
+        if (this.isSquare) {
+            symCounts["1"] /= 8;
+            symCounts["2"] /= 4;
+            symCounts["4"] /= 2;
+        } else {
+            symCounts["1"] /= 4;
+            symCounts["2"] /= 2;
+        }
 
         let unique = symCounts["1"] + symCounts["2"] + symCounts["4"] + symCounts["8"];
 
@@ -425,4 +432,9 @@ function compose(a: number[], b: number[]): number[] {
         c[i] = a[b[i]];
     }
     return c;
+}
+
+function pluralize(n: number, word: string, pluralWord?: string): string {
+    const show = [word, pluralWord || word + 's'][n === 1 ? 0 : 1];
+    return `${n.toLocaleString()} ${show}`;
 }

@@ -2,7 +2,7 @@
 
 import { argv, hrtime } from 'process';
 
-import { Maze } from './maze-generator.js';
+import { Maze, pluralize } from './maze-generator.js';
 
 let args = argv.slice(2);
 let showSym = false;
@@ -57,16 +57,19 @@ const counts = maze.countMazes();
 const elapsedSeconds = hrSeconds(hrtime(startTime));
 
 console.log(`There are ${counts.total.toLocaleString()} mazes of size ${rows}x${cols}.`);
-console.log(`${counts.unique.toLocaleString()} are unique:`);
+console.log(`${pluralize(counts.unique, 'is', 'are')} unique:`);
 console.log('---')
-console.log(`${counts.symCounts["1"].toLocaleString()} are not symmetric.`);
-console.log(`${counts.symCounts["2"].toLocaleString()} have 2-way symmetry.`);
-console.log(`${counts.symCounts["4"]} have 4-way symmetry.`);
-console.log(`${counts.symCounts["8"]} have 8-way symmetry.`);
+console.log(`${pluralize(counts.symCounts["1"], 'is', 'are')} not symmetric.`);
+console.log(`${pluralize(counts.symCounts["2"], 'has', 'have')} 2-way symmetry.`);
+console.log(`${pluralize(counts.symCounts["4"], 'has', 'have')} 4-way symmetry.`);
 
-console.log(`\nOne in ${(candidates/counts.total).toFixed(2)} of the wall placements are valid mazes.`);
+if (maze.isSquare) {
+    console.log(`${pluralize(counts.symCounts["8"], 'has', 'have')} 8-way symmetry.`);
+}
 
-console.log(`---\nElapsed time: ${elapsedSeconds.toFixed(2)}s`);
+console.log(`\nOne in ${(candidates/counts.total).toFixed(1)} of the wall placements are valid mazes.`);
+
+console.log(`---\nElapsed time: ${elapsedSeconds.toFixed(1)}s`);
 console.log(`${Math.floor(counts.total/elapsedSeconds).toLocaleString()} mazes per second.`);
 
 function hrSeconds(hrtime: [number, number]) {
