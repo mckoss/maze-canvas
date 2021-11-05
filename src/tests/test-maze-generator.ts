@@ -228,9 +228,39 @@ suite("Maze", () => {
         assert.equal(maze.transforms.length, 7);
         assert.deepEqual(maze.transforms, [[],[],[],[],[],[],[]]);
 
-        const maze2 = new Maze(2, 2);
-        assert.equal(maze2.transforms.length, 7);
-        console.log(maze2.transforms);
+        for (let size = 2; size < 5; size++) {
+            const numLocations = 2 * (size ** 2 - size);
+            const maze = new Maze(size, size);
+            assert.equal(maze.transforms.length, 7);
+            const r1 = maze.transforms[0];
+            const h = maze.transforms[3];
+            testPermutation(maze.transforms[0], numLocations, 4); // r1
+            testPermutation(maze.transforms[1], numLocations, 2); // r2
+            testPermutation(maze.transforms[2], numLocations, 4); // r3
+            testPermutation(maze.transforms[3], numLocations, 2); // h
+            testPermutation(maze.transforms[4], numLocations, 2); // h r1
+            testPermutation(maze.transforms[5], numLocations, 2); // h r2
+            testPermutation(maze.transforms[6], numLocations, 2); // h r3
+        }
+
+        // Ensure each permutation is:
+        // - The right size
+        // - Has all the integers from 0 .. n - 1
+        // - Generate the identity in the expected order when composed
+        //   with itself.
+        function testPermutation(perm: number[], n: number, order: number) {
+            console.log(perm);
+            assert.equal(perm.length, n, `length`);
+            let elements = perm.slice();
+            elements.sort((a, b) => a - b);
+            assert.deepEqual(elements, [...Array(n).keys()], `${elements} all integers`);
+
+            elements = perm.slice();
+            for (let i = 1; i < order; i++) {
+                elements = compose(perm, elements);
+            }
+            assert.deepEqual(elements, [...Array(n).keys()], `${elements} order`);
+        }
     });
 });
 
