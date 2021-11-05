@@ -102,8 +102,8 @@ To count mazes of a given size:
 $ scripts/count-mazes.js 4
 Calculating...
 There are 100,352 mazes of size 4x4.
-Elapsed time: 10.67s
-9,401 mazes per second.
+Elapsed time: 2.12s
+47,324 mazes per second.
 ```
 
 I find it convenient to use `tsc --watch` to compile source files

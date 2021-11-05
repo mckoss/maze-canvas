@@ -75,6 +75,9 @@ class Maze {
                 for (let horizontals of this.forAllHorizontalWalls()) {
                     copyTo(this.walls, this.wallIndex(row, 0, Direction.down),
                         horizontals);
+                    if (!this.allHaveExit(row)) {
+                        continue;
+                    }
                     yield *this.allMazesFromRow(row + 1);
                 }
             } else {
