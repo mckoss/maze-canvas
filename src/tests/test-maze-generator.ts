@@ -177,12 +177,7 @@ suite("Maze", () => {
 
         for (let test of tests) {
             const maze = new Maze(...test[0]);
-            let count = 0;
-            for (let m of maze.allMazes()) {
-                // console.log(m.toString());
-                count++;
-            }
-            assert.equal(count, test[1]);
+            assert.equal(maze.countMazes(), test[1]);
         }
     });
 

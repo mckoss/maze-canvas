@@ -51,6 +51,14 @@ class Maze {
         this.walls = new Array(rows * (cols - 1) + cols * (rows - 1)).fill(false);
     }
 
+    countMazes(): number {
+        let count = 0;
+        for (let m of this.allMazes()) {
+            count++;
+        }
+        return count;
+    }
+
     *allMazes(): Generator<Maze> {
         yield *this.allMazesFromRow(0);
     }
