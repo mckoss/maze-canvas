@@ -5,6 +5,10 @@ This repo has two concerns:
 1. Generative an exhaustive list of mazes of a given size.
 2. Drawing these mazes in an attractive style using HTML Canvas API.
 
+To render the equations in this README - vist the hosted version here:
+
+http://mckoss.com/maze-canvas/
+
 [![Node.js CI](https://github.com/mckoss/maze-canvas/actions/workflows/main.yml/badge.svg)](https://github.com/mckoss/maze-canvas/actions/workflows/main.yml)
 
 
