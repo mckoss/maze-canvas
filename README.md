@@ -24,13 +24,14 @@ The algorithm can be summarized as:
 2. Generate all possible combinations of vertical walls.
 3. Generate all possible combinations of horizontal (floor) walls
    (separating the first and second row).
-4. Test if the maze is "perfect" (there is a unique path from every cell to
+4. Repeat for all the rows of the maze.
+5. Test if the maze is "perfect" (there is a unique path from every cell to
     every other cell).
 
 # Maze Facts
 
 The On-Line Encyclopedia of Integer sequences lists the [number of unique
-mazes of size NxN (A007341)](https://oeis.org/A007341/list)  as:
+mazes of size NxN (A007341)](https://oeis.org/A007341)  as:
 
 | N | Mazes |
 |---|---|
@@ -115,3 +116,15 @@ run with the `npm run coverage` command.
    (also count mazes that have 2, 4, and 8-way symmetry).
 5. Command line maze counter.
 6. Web page generator with Canvas drawing (and customization).
+
+
+<script defer>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+<script id="MathJax-script" defer
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
