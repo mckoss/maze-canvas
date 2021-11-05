@@ -1,11 +1,15 @@
-export { tuples, Maze, Direction, TESTING };
+export { tuples, Maze, MazeCount, Direction, TESTING };
 
 // Exposed for testing - not part of the public API.
-const TESTING = { compose, oppositeDir, rotateDir, reflectDir };
+const TESTING = { compose, oppositeDir, rotateDir, reflectHDir, reflectVDir };
 
 enum Direction {
     up = 0, right = 1, down = 2, left = 3
 }
+
+enum Symmetry {
+    one = "1", two = "2", four = "4", eight = "8"
+};
 
 function oppositeDir(dir: Direction): Direction {
     return (dir + 2) % 4;
@@ -17,8 +21,13 @@ function rotateDir(dir: Direction): Direction {
 }
 
 // Reflection across vertical axis.
-function reflectDir(dir: Direction): Direction {
+function reflectHDir(dir: Direction): Direction {
     return [Direction.up, Direction.left, Direction.down, Direction.right][dir];
+}
+
+// Reflect across horizontal axis.
+function reflectVDir(dir: Direction): Direction {
+    return [Direction.down, Direction.right, Direction.up, Direction.left][dir];
 }
 
 // Differential index in row cells and column cells.
@@ -26,17 +35,20 @@ const dcell: [number, number][] = [
     [-1, 0], [0, 1], [1, 0], [0, -1]
 ];
 
-class MazeCount {
-    sym1: number;
-    sym2: number;
-    sym4: number;
-    sym8: number;
+type MazeCount = {
+    // Number to mazes - regardless of symmetry.
+    total: number;
 
-    constructor() {
-        this.sym1 = 0;
-        this.sym2 = 0;
-        this.sym4 = 0;
-        this.sym8 = 0;
+    // Number of unique mazes when rotations and
+    // reflections are taken into account.
+    unique: number;
+
+    // Number of mazes with each symmetry.
+    symCounts: {
+        "1": number,
+        "2": number,
+        "4": number,
+        "8": number
     }
 }
 
@@ -44,8 +56,7 @@ class Maze {
     rows: number;
     cols: number;
 
-    // 1, 2, 4, or 8
-    symmetries: number = 1;
+    symmetry?: Symmetry;
 
     // The 7 transforms of wall indices rotating and
     // horizontal reflection.
@@ -68,13 +79,18 @@ class Maze {
         this.cells = new Array(rows * cols).fill(0);
         this.walls = new Array(rows * (cols - 1) + cols * (rows - 1)).fill(false);
 
-        if (this.rows === this.cols) {
+        this.calcTransforms();
+    }
+
+    calcTransforms(): void {
+        let isSquare = this.rows === this.cols;
+
+        if (isSquare) {
             let r1: number[] = [];
             let horiz: number[] = [];
-            let index = 0;
             for (let coords of this.allWallCoords()) {
                 r1.push(this.wallIndex(...this.rot(...coords)));
-                horiz.push(this.wallIndex(...this.reflect(...coords)));
+                horiz.push(this.wallIndex(...this.reflectH(...coords)));
             }
             const r2 = compose(r1, r1);
             const r3 = compose(r2, r1);
@@ -83,7 +99,25 @@ class Maze {
             for (let i = 0; i < 3; i++) {
                 this.transforms.push(compose(horiz, this.transforms[i]));
             }
+        } else {
+            let horiz: number[] = [];
+            let vert: number[] = [];
+
+            for (let coords of this.allWallCoords()) {
+                horiz.push(this.wallIndex(...this.reflectH(...coords)));
+                vert.push(this.wallIndex(...this.reflectV(...coords)));
+            }
+            this.transforms.push(horiz);
+            this.transforms.push(vert);
+            this.transforms.push(compose(horiz, vert));
         }
+    }
+
+    clone(): Maze {
+        let m = new Maze(this.rows, this.cols);
+        m.walls = this.walls.slice();
+        m.symmetry = this.symmetry;
+        return m;
     }
 
     rot(row: number, col:number, dir: Direction): [number, number, Direction] {
@@ -93,20 +127,50 @@ class Maze {
         return [col, this.rows - row - 1, rotateDir(dir)];
     }
 
-    reflect(row: number, col: number, dir:Direction): [number, number, Direction] {
-        return [row, this.cols - col - 1, reflectDir(dir)];
+    reflectH(row: number, col: number, dir:Direction): [number, number, Direction] {
+        return [row, this.cols - col - 1, reflectHDir(dir)];
     }
 
-    countMazes(): number {
-        let count = 0;
-        for (let m of this.allMazes()) {
-            count++;
+    reflectV(row: number, col: number, dir:Direction): [number, number, Direction] {
+        return [this.rows - row - 1, col, reflectVDir(dir)];
+    }
+
+    countMazes(): MazeCount {
+        let total = 0;
+        let symCounts = {
+            "1": 0,
+            "2": 0,
+            "4": 0,
+            "8": 0
+        };
+
+        for (let m of this.allMazes(this.rows === this.cols)) {
+            total++;
+            symCounts[m.symmetry!] += 1;
         }
-        return count;
+        // Remove the duplicates from the generated mazes.
+        const unique = total - symCounts["2"] - 3 * symCounts["4"] -
+            7 * symCounts["8"];
+        return { total, unique, symCounts };
     }
 
-    *allMazes(): Generator<Maze> {
-        yield *this.allMazesFromRow(0);
+    *allMazes(calcSym = false): Generator<Maze> {
+        for (let maze of this.allMazesFromRow(0)) {
+            if (calcSym) {
+                maze.calcSym();
+            }
+            yield maze;
+        }
+    }
+
+    calcSym(): void {
+        let sym = 1;
+        for (let t of this.transforms) {
+            if (this.walls.every((w, i) => w === this.walls[t[i]])) {
+                sym++;
+            }
+        }
+        this.symmetry = sym.toString() as Symmetry
     }
 
     get numWalls() : number {

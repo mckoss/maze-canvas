@@ -1,15 +1,29 @@
 import { assert } from "chai";
 
-import { tuples, Maze, Direction, TESTING }
+import { tuples, Maze, MazeCount, Direction, TESTING }
 from "../maze-generator.js";
 
-const { compose, oppositeDir, rotateDir, reflectDir } = TESTING;
+const { compose, oppositeDir, rotateDir, reflectHDir, reflectVDir } = TESTING;
 
 suite("Maze", () => {
     test("constructor", () => {
         const maze = new Maze(4, 4);
         assert.equal(maze.cols, 4);
         assert.equal(maze.rows, 4);
+    });
+
+    test("clone", () => {
+        const maze = new Maze(4, 4);
+        maze.setWall(1, 1, Direction.right);
+        maze.setWall(1, 1, Direction.down);
+        const clone = maze.clone();
+
+        assert.equal(maze.cols, clone.cols, 'cols');
+        assert.equal(maze.rows, clone.rows, 'rows');
+        assert.deepEqual(maze.transforms, clone.transforms, 'transforms');
+        assert.equal(maze.symmetry, clone.symmetry, 'symmetry');
+        assert.equal(maze.cells.length, clone.cells.length, 'cells length');
+        assert.deepEqual(maze.walls, clone.walls, 'walls');
     });
 
     test("cellIndex", () => {
@@ -168,7 +182,7 @@ suite("Maze", () => {
 
         for (let test of tests) {
             const maze = new Maze(...test[0]);
-            assert.equal(maze.countMazes(), test[1]);
+            assert.equal(maze.countMazes().total, test[1]);
         }
     });
 
@@ -213,14 +227,16 @@ suite("Maze", () => {
     test("reflect", () => {
         const maze = new Maze(3, 3);
 
-        const tests: [[number, number, Direction], [number, number, Direction]][] = [
-            [ [0, 0, Direction.right], [0, 2, Direction.left] ],
-            [ [0, 0, Direction.down], [0, 2, Direction.down] ],
-        ];
-        // todo: Test against indices here!
-        for (let test of tests) {
-            assert.deepEqual(maze.reflect(...test[0]), test[1]);
+        let hIndices = [];
+        let vIndices = [];
+
+        for (let coords of maze.allWallCoords()) {
+            hIndices.push(maze.wallIndex(...maze.reflectH(...coords)));
+            vIndices.push(maze.wallIndex(...maze.reflectV(...coords)));
         }
+
+        assert.deepEqual(hIndices, [1, 0, 4, 3, 2, 6, 5, 9, 8, 7, 11, 10]);
+        assert.deepEqual(vIndices, [10, 11, 7, 8, 9, 5, 6, 2, 3, 4, 0, 1]);
     });
 
     test("transforms", () => {
@@ -228,6 +244,7 @@ suite("Maze", () => {
         assert.equal(maze.transforms.length, 7);
         assert.deepEqual(maze.transforms, [[],[],[],[],[],[],[]]);
 
+        // Square maze examples.
         for (let size = 2; size < 5; size++) {
             const numLocations = 2 * (size ** 2 - size);
             const maze = new Maze(size, size);
@@ -243,13 +260,24 @@ suite("Maze", () => {
             testPermutation(maze.transforms[6], numLocations, 2); // h r3
         }
 
+        // Reflections only for non-square mazes.
+        const mazeRect = new Maze(2, 3);
+        const numLocations = 7;
+        assert.equal(mazeRect.transforms.length, 3);
+        for (const t of mazeRect.transforms) {
+            testPermutation(t, numLocations, 2);
+        }
+
+        assert.deepEqual(mazeRect.transforms[0], [1, 0, 4, 3, 2, 6, 5]);
+        assert.deepEqual(mazeRect.transforms[1], [5, 6, 2, 3, 4, 0, 1]);
+        assert.deepEqual(mazeRect.transforms[2], [6, 5, 4, 3, 2, 1, 0]);
+
         // Ensure each permutation is:
         // - The right size
         // - Has all the integers from 0 .. n - 1
         // - Generate the identity in the expected order when composed
         //   with itself.
         function testPermutation(perm: number[], n: number, order: number) {
-            console.log(perm);
             assert.equal(perm.length, n, `length`);
             let elements = perm.slice();
             elements.sort((a, b) => a - b);
@@ -290,7 +318,7 @@ suite("misc", () => {
         }
     });
 
-    test("reflectDir", () => {
+    test("reflectHDir", () => {
         const tests = [
             [ Direction.up, Direction.up ],
             [ Direction.right, Direction.left ],
@@ -299,7 +327,20 @@ suite("misc", () => {
         ];
 
         for (let test of tests) {
-            assert.equal(reflectDir(test[0]), test[1]);
+            assert.equal(reflectHDir(test[0]), test[1]);
+        }
+    });
+
+    test("reflectVDir", () => {
+        const tests = [
+            [ Direction.up, Direction.down ],
+            [ Direction.right, Direction.right ],
+            [ Direction.down, Direction.up ],
+            [ Direction.left, Direction.left ],
+        ];
+
+        for (let test of tests) {
+            assert.equal(reflectVDir(test[0]), test[1]);
         }
     });
 
