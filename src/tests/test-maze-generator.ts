@@ -1,20 +1,11 @@
 import { assert } from "chai";
 
-import { tuples, Maze, Direction, oppositeDir } from "../maze-generator.js";
+import { tuples, Maze, Direction, TESTING }
+from "../maze-generator.js";
+
+const { compose, oppositeDir, rotateDir, reflectDir } = TESTING;
 
 suite("Maze", () => {
-    test("oppositeDir", () => {
-        const tests = [
-            [ Direction.up, Direction.down ],
-            [ Direction.right, Direction.left ],
-        ];
-
-        for (let test of tests) {
-            assert.equal(oppositeDir(test[0]), test[1]);
-            assert.equal(oppositeDir(test[1]), test[0]);
-        }
-    });
-
     test("constructor", () => {
         const maze = new Maze(4, 4);
         assert.equal(maze.cols, 4);
@@ -220,7 +211,45 @@ suite("Maze", () => {
     });
 });
 
-suite("iterators", () => {
+suite("misc", () => {
+    test("oppositeDir", () => {
+        const tests = [
+            [ Direction.up, Direction.down ],
+            [ Direction.right, Direction.left ],
+        ];
+
+        for (let test of tests) {
+            assert.equal(oppositeDir(test[0]), test[1]);
+            assert.equal(oppositeDir(test[1]), test[0]);
+        }
+    });
+
+    test("rotateDir", () => {
+        const tests = [
+            [ Direction.up, Direction.right ],
+            [ Direction.right, Direction.down ],
+            [ Direction.down, Direction.left ],
+            [ Direction.left, Direction.up ],
+        ];
+
+        for (let test of tests) {
+            assert.equal(rotateDir(test[0]), test[1]);
+        }
+    });
+
+    test("reflectDir", () => {
+        const tests = [
+            [ Direction.up, Direction.up ],
+            [ Direction.right, Direction.left ],
+            [ Direction.down, Direction.down ],
+            [ Direction.left, Direction.right ],
+        ];
+
+        for (let test of tests) {
+            assert.equal(reflectDir(test[0]), test[1]);
+        }
+    });
+
     test("tuples", () => {
         const tests: [[number, number], number[][]][] = [
             [ [0, 0], [[]] ],
@@ -241,6 +270,23 @@ suite("iterators", () => {
                 i++;
             }
             assert.equal(i, t[1].length, `Expected ${t[1].length} tuples (only got ${i})`);
+        }
+    });
+
+    test("compose", () => {
+        const r1 = [1, 3, 0, 2];
+        const r2 = compose(r1, r1);
+        const h = [1, 0, 3, 2];
+        const tests: [ [number[], number[]], number[]][] = [
+            [ [[], []], [] ],
+            [ [[2, 1, 0], [2, 1, 0]], [0, 1, 2] ],
+            [ [h, r1], [0, 2, 1, 3] ],
+            [ [h, h], [0, 1, 2, 3] ],
+            [ [r2, r2], [0, 1, 2, 3] ],
+            [ [r1, compose(r1, r2)], [0, 1, 2, 3] ],
+        ];
+        for (let test of tests) {
+            assert.deepEqual(compose(...test[0]), test[1], `${test}`);
         }
     });
 });

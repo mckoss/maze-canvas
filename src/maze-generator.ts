@@ -1,4 +1,7 @@
-export { tuples, Maze, Direction, oppositeDir };
+export { tuples, Maze, Direction, TESTING };
+
+// Exposed for testing - not part of the public API.
+const TESTING = { compose, oppositeDir, rotateDir, reflectDir };
 
 enum Direction {
     up = 0, right = 1, down = 2, left = 3
@@ -6,6 +9,16 @@ enum Direction {
 
 function oppositeDir(dir: Direction): Direction {
     return (dir + 2) % 4;
+}
+
+// Rotate clockwise 90 degrees.
+function rotateDir(dir: Direction): Direction {
+    return (dir + 1) % 4;
+}
+
+// Reflection across vertical axis.
+function reflectDir(dir: Direction): Direction {
+    return [Direction.up, Direction.left, Direction.down, Direction.right][dir];
 }
 
 // Differential index in row cells and column cells.
@@ -34,6 +47,11 @@ class Maze {
     // 1, 2, 4, or 8
     symmetries: number = 1;
 
+    // The 7 transforms of wall indices rotating and
+    // horizontal reflection.
+    // r1, r2, r3, h, h.r1, h.r2, h.r3
+    transforms: number[][] = [];
+
     // Cells contains a partition index.
     cells: number[];
 
@@ -49,6 +67,34 @@ class Maze {
         this.completeWalls = rows * cols - rows - cols + 1;
         this.cells = new Array(rows * cols).fill(0);
         this.walls = new Array(rows * (cols - 1) + cols * (rows - 1)).fill(false);
+
+        if (this.rows === this.cols) {
+            let r1: number[] = [];
+            let horiz: number[] = [];
+            let index = 0;
+            for (let coords of this.allWallCoords()) {
+                r1.push(this.wallIndex(...this.rot(...coords)));
+                horiz.push(this.wallIndex(...this.reflect(...coords)));
+            }
+            const r2 = compose(r1, r1);
+            const r3 = compose(r2, r1);
+            this.transforms.push(r1, r2, r3);
+            this.transforms.push(horiz);
+            for (let i = 0; i < 3; i++) {
+                this.transforms.push(compose(horiz, this.transforms[i]));
+            }
+        }
+    }
+
+    rot(row: number, col:number, dir: Direction): [number, number, Direction] {
+        if (this.rows !== this.cols) {
+            throw new Error('Cannot rotate non-square maze');
+        }
+        return [col, this.rows - row, rotateDir(dir)];
+    }
+
+    reflect(row: number, col: number, dir:Direction): [number, number, Direction] {
+        return [col, row, reflectDir(dir)];
     }
 
     countMazes(): number {
@@ -153,13 +199,30 @@ class Maze {
             return -1;
         }
 
+        // Index for right wall.
         let index = row * (2 * this.cols - 1) + col;
 
+        // Adjustment for down wall.
         if (dir === Direction.down) {
             index += this.cols - 1;
         }
 
         return index;
+    }
+
+    // Generate wall coordinates in index order.
+    *allWallCoords(): Generator<[number, number, Direction]> {
+        for (let row = 0; row < this.rows; row++) {
+            for (let col = 0; col < this.cols - 1; col++) {
+                yield [row, col, Direction.right];
+            }
+            if (row === this.rows - 1) {
+                break;
+            }
+            for (let col = 0; col < this.cols; col++) {
+                yield [row, col, Direction.down];
+            }
+        }
     }
 
     allHaveExit(lastRow: number): boolean {
@@ -281,4 +344,16 @@ function copyTo(dest: any[], iDest: number, src: any[]): void {
     for (let i = 0; i < src.length; i++) {
         dest[iDest + i] = src[i];
     }
+}
+
+// Compose two mapping arrays to form a new mapping array.
+// The indices of the sccond array are applied first to yield
+// indices into the first array (e.g. compose a with b).
+// c[x] = a[b[x]]
+function compose(a: number[], b: number[]): number[] {
+    let c = new Array(a.length);
+    for (let i = 0; i < a.length; i++) {
+        c[i] = a[b[i]];
+    }
+    return c;
 }
