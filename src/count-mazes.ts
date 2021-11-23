@@ -2,17 +2,23 @@
 
 import { argv, hrtime } from 'process';
 
-import { Maze, pluralize } from './maze-generator.js';
+import { Maze } from './maze-generator.js';
+import { pluralize } from './util.js';
 
 let args = argv.slice(2);
 let showSym = false;
+let showUnique = false;
 let rows = 0;
 let cols = 0;
 
 for (let arg of args) {
     if (arg.slice(0, 2) === '--') {
-        if (arg.slice(2) === 'sym') {
+        if (arg.slice(2) === 'help') {
+            help();
+        } else if (arg.slice(2) === 'sym') {
             showSym = true;
+        } else if (arg.slice(2) === 'unique') {
+            showUnique = true;
         } else {
             help(`Unknown option: ${arg}`);
         }
@@ -36,6 +42,10 @@ if (cols === 0) {
     cols = rows;
 }
 
+if (rows === 0) {
+    help(`Missing maze size`);
+}
+
 console.log("Calculating...");
 
 const maze = new Maze(rows, cols);
@@ -48,7 +58,11 @@ console.log(`There are binom(${wallCount}, ${walls}) = ` +
     `${candidates.toLocaleString()} possible wall placements.`);
 
 const estSecs = candidates/16/50000;
-if (estSecs > 15) {
+if (estSecs > 3600) {
+    console.log(`Estimated time: ${(estSecs/3600).toFixed(1)} hours`);
+} else if (estSecs > 60) {
+    console.log(`Estimated time: ${(estSecs/60).toFixed(1)} minutes`);
+} else if (estSecs > 15) {
     console.log(`Estimated time: ${Math.round(estSecs)} seconds.`);
 }
 
@@ -67,6 +81,18 @@ if (maze.isSquare) {
     console.log(`${pluralize(counts.symCounts["8"], 'has', 'have')} 8-way symmetry.`);
 }
 
+if (showUnique || showSym) {
+    for (let m of maze.allMazes(true)) {
+        if (!m.isCanonical) {
+            continue;
+        }
+        if (!showUnique && m.symmetry === "1") {
+            continue;
+        }
+        console.log(`${m.toString().slice(0, -1)}${m.symmetry !== "1" ? ` (${m.symmetry})` : ''}`);
+    }
+}
+
 console.log(`\nOne in ${(candidates/counts.total).toFixed(1)} of the wall placements are valid mazes.`);
 
 console.log(`---\nElapsed time: ${elapsedSeconds.toFixed(1)}s`);
@@ -79,10 +105,12 @@ function hrSeconds(hrtime: [number, number]) {
 function help(err?: string) {
     if (err) {
         console.error(err);
+        console.log('');
     }
 
-    console.log("\nUsage: count-mazes.js [--sym] <rows> [<cols>]");
+    console.log("Usage: count-mazes.js [--sym] <rows> [<cols>]");
     console.log(" --sym: Print all symmetrical mazes.");
+    console.log(" --unique: Print all (unique) mazes.");
     console.log(" <rows>: Number of rows in the maze");
     console.log(" <cols>: Number of columns in the maze (same as rows if not given)");
     process.exit(1);

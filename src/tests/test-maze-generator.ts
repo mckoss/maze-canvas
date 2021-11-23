@@ -1,7 +1,9 @@
 import { assert } from "chai";
 
-import { tuples, Maze, MazeCount, Direction, pluralize, TESTING }
+import { tuples, Maze, MazeCount, Direction, TESTING }
 from "../maze-generator.js";
+
+import { pluralize } from '../util.js';
 
 const { compose, oppositeDir, rotateDir, reflectHDir, reflectVDir } = TESTING;
 

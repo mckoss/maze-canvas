@@ -1,4 +1,4 @@
-export { tuples, Maze, MazeCount, Direction, pluralize, TESTING };
+export { tuples, Maze, MazeCount, Direction, TESTING };
 
 // Exposed for testing - not part of the public API.
 const TESTING = { compose, oppositeDir, rotateDir, reflectHDir, reflectVDir };
@@ -57,6 +57,7 @@ class Maze {
     cols: number;
 
     symmetry?: Symmetry;
+    isCanonical?: boolean;
 
     // The 7 transforms of wall indices rotating and
     // horizontal reflection.
@@ -177,12 +178,23 @@ class Maze {
 
     calcSym(): void {
         let sym = 1;
+        let isCanonical = true;
+
         for (let t of this.transforms) {
-            if (this.walls.every((w, i) => w === this.walls[t[i]])) {
+            if (this.walls.every((w, i) => {
+                if (w !== this.walls[t[i]]) {
+                    if (isCanonical && w && !this.walls[t[i]]) {
+                        isCanonical = false;
+                    }
+                    return false;
+                }
+                return true;
+            })) {
                 sym++;
             }
         }
         this.symmetry = sym.toString() as Symmetry
+        this.isCanonical = isCanonical;
     }
 
     get numWalls() : number {
@@ -434,7 +446,4 @@ function compose(a: number[], b: number[]): number[] {
     return c;
 }
 
-function pluralize(n: number, word: string, pluralWord?: string): string {
-    const show = [word, pluralWord || word + 's'][n === 1 ? 0 : 1];
-    return `${n.toLocaleString()} ${show}`;
-}
+
