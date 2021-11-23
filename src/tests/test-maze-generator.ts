@@ -3,7 +3,7 @@ import { assert } from "chai";
 import { tuples, Maze, MazeCount, Direction, TESTING }
 from "../maze-generator.js";
 
-import { pluralize } from '../util.js';
+import { pluralize, binomial } from '../util.js';
 
 const { compose, oppositeDir, rotateDir, reflectHDir, reflectVDir } = TESTING;
 
@@ -406,6 +406,22 @@ suite("misc", () => {
 
         for (let test of tests) {
             assert.equal(pluralize(...test[0]), test[1], `${test}`);
+        }
+    });
+
+    test("binomial", () => {
+        const tests: [[number, number], number][] = [
+            [[0, 0], 1],
+            [[0, 1], 0],
+            [[1, 0], 1],
+            [[1, 1], 1],
+            [[2, 0], 1],
+            [[5, 2], 10],
+            [[10, 5], 252],
+        ];
+
+        for (let test of tests) {
+            assert.equal(binomial(...test[0]), test[1], `${test}`);
         }
     });
 });

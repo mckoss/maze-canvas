@@ -3,10 +3,10 @@
 import { argv, hrtime } from 'process';
 
 import { Maze } from './maze-generator.js';
-import { pluralize } from './util.js';
+import { pluralize, binomial } from './util.js';
 
 let args = argv.slice(2);
-let showSym = false;
+let showSym = 0;
 let showUnique = false;
 let rows = 0;
 let cols = 0;
@@ -15,10 +15,12 @@ for (let arg of args) {
     if (arg.slice(0, 2) === '--') {
         if (arg.slice(2) === 'help') {
             help();
-        } else if (arg.slice(2) === 'sym') {
-            showSym = true;
-        } else if (arg.slice(2) === 'unique') {
-            showUnique = true;
+        } else if (arg.slice(2, 6) === 'show') {
+            if (arg.slice(6, 7) === '=') {
+                showSym = parseInt(arg.slice(7), 10);
+            } else {
+                showSym = 1;
+            }
         } else {
             help(`Unknown option: ${arg}`);
         }
@@ -81,12 +83,12 @@ if (maze.isSquare) {
     console.log(`${pluralize(counts.symCounts["8"], 'has', 'have')} 8-way symmetry.`);
 }
 
-if (showUnique || showSym) {
+if (showSym !== 0) {
     for (let m of maze.allMazes(true)) {
         if (!m.isCanonical) {
             continue;
         }
-        if (!showUnique && m.symmetry === "1") {
+        if (parseInt(m.symmetry!.toString(), 10) < showSym) {
             continue;
         }
         console.log(`${m.toString().slice(0, -1)}${m.symmetry !== "1" ? ` (${m.symmetry})` : ''}`);
@@ -109,28 +111,10 @@ function help(err?: string) {
     }
 
     console.log("Usage: count-mazes.js [--sym] <rows> [<cols>]");
-    console.log(" --sym: Print all symmetrical mazes.");
-    console.log(" --unique: Print all (unique) mazes.");
+    console.log(" --show: Print all unique mazes.");
+    console.log(" --show=2: Print all 2-way symmetrical mazes.");
+    console.log(" --show=4: Print all 4-way symmetrical mazes.");
     console.log(" <rows>: Number of rows in the maze");
     console.log(" <cols>: Number of columns in the maze (same as rows if not given)");
     process.exit(1);
-}
-
-// Compute binomial coefficient (n choose k)
-function binomial(n: number, k: number) {
-    if (k > n) {
-        return 0;
-    }
-
-    if (k > n - k) {
-        k = n - k;
-    }
-
-    let result = 1;
-    for (let i = 1; i <= k; ++i) {
-        result *= n--;
-        result /= i;
-    }
-
-    return result;
 }
