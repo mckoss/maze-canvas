@@ -88,10 +88,10 @@ if (showSym !== 0) {
         if (!m.isCanonical) {
             continue;
         }
-        if (parseInt(m.symmetry!.toString(), 10) < showSym) {
+        if (m.symmetry < showSym) {
             continue;
         }
-        console.log(`${m.toString().slice(0, -1)}${m.symmetry !== "1" ? ` (${m.symmetry})` : ''}`);
+        console.log(`${m.toString().slice(0, -1)}${m.symmetry !== 1 ? ` (${m.symmetry})` : ''}`);
     }
 }
 

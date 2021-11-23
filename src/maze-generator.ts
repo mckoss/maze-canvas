@@ -7,9 +7,7 @@ enum Direction {
     up = 0, right = 1, down = 2, left = 3
 }
 
-enum Symmetry {
-    one = "1", two = "2", four = "4", eight = "8"
-};
+type Symmetry = 1 | 2 | 4 | 8;
 
 function oppositeDir(dir: Direction): Direction {
     return (dir + 2) % 4;
@@ -56,7 +54,7 @@ class Maze {
     rows: number;
     cols: number;
 
-    symmetry?: Symmetry;
+    _symmetry?: Symmetry;
     isCanonical?: boolean;
 
     // The 7 transforms of wall indices rotating and
@@ -119,7 +117,8 @@ class Maze {
     clone(): Maze {
         let m = new Maze(this.rows, this.cols);
         m.walls = this.walls.slice();
-        m.symmetry = this.symmetry;
+        m._symmetry = this._symmetry;
+        m.isCanonical = this.isCanonical;
         return m;
     }
 
@@ -176,8 +175,15 @@ class Maze {
         }
     }
 
+    get symmetry(): Symmetry {
+        if (this._symmetry === undefined) {
+            this.calcSym();
+        }
+        return this._symmetry!;
+    }
+
     calcSym(): void {
-        let sym = 1;
+        let sym: Symmetry = 1;
         let isCanonical = true;
 
         for (let t of this.transforms) {
@@ -193,7 +199,7 @@ class Maze {
                 sym++;
             }
         }
-        this.symmetry = sym.toString() as Symmetry
+        this._symmetry = sym as Symmetry;
         this.isCanonical = isCanonical;
     }
 
