@@ -54,8 +54,8 @@ class Maze {
     rows: number;
     cols: number;
 
-    _symmetry?: Symmetry;
-    isCanonical?: boolean;
+    #symmetry?: Symmetry;
+    #isCanonical?: boolean;
 
     // The 7 transforms of wall indices rotating and
     // horizontal reflection.
@@ -117,8 +117,8 @@ class Maze {
     clone(): Maze {
         let m = new Maze(this.rows, this.cols);
         m.walls = this.walls.slice();
-        m._symmetry = this._symmetry;
-        m.isCanonical = this.isCanonical;
+        m.#symmetry = this.#symmetry;
+        m.#isCanonical = this.#isCanonical;
         return m;
     }
 
@@ -176,10 +176,17 @@ class Maze {
     }
 
     get symmetry(): Symmetry {
-        if (this._symmetry === undefined) {
+        if (this.#symmetry === undefined) {
             this.calcSym();
         }
-        return this._symmetry!;
+        return this.#symmetry!;
+    }
+
+    get isCanonical(): boolean {
+        if (this.#isCanonical === undefined) {
+            this.calcSym();
+        }
+        return this.#isCanonical!;
     }
 
     calcSym(): void {
@@ -199,8 +206,8 @@ class Maze {
                 sym++;
             }
         }
-        this._symmetry = sym as Symmetry;
-        this.isCanonical = isCanonical;
+        this.#symmetry = sym as Symmetry;
+        this.#isCanonical = isCanonical;
     }
 
     get numWalls() : number {
