@@ -40,7 +40,7 @@ function drawMazes(rows: number, columns: number, ctx: CanvasRenderingContext2D)
     const spacePerRow = 2 * params.margin + (mazesPerRow - 1) * params.spacing;
 
     let mc = new MazeCanvas(rows, columns, []);
-    mc.sizeFromWidth((width - spacePerRow) / mazesPerRow);
+    mc.sizeFromWidth(Math.floor((width - spacePerRow) / mazesPerRow));
 
     const stepDim = [mc.mazeSize[0] + params.spacing, mc.mazeSize[1] + params.spacing];
 
