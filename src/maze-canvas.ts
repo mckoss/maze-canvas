@@ -5,8 +5,8 @@ class MazeCanvas {
     rows: number;
     columns: number;
 
-    wallBorder = 1;
-    wallPadding = 1;
+    wallBorder = 2
+    wallPadding = 3;
     borderColor = 'rgb(0, 0, 0)';
     cellColor = 'rgb(255, 255, 255)';
     backgroundColor = 'red';

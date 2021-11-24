@@ -6,12 +6,18 @@ export { initializePage };
 type ElementBindings = { [key: string]: HTMLElement };
 
 const elements = bindElements('maze-canvas', 'error', 'rows', 'columns',
-'generate', 'maze-size', 'total', 'unique');
+'generate', 'maze-size', 'total', 'unique', 'display-type', 'displayed');
 
 const params = {
     margin: 20,
-    spacing: 3,
+    spacing: 8,
     backgroundColor: 'rgb(177, 31, 31)',
+};
+
+const displayTypes = {
+    "1": "unique",
+    "2": "2-symmetric",
+    "4": "4-symmetric",
 };
 
 function initializePage() {
@@ -23,10 +29,10 @@ function initializePage() {
     ctx.fillStyle = params.backgroundColor;
     ctx.fillRect(0, 0, width, height);
 
-    drawMazes(4, 3, ctx);
+    drawMazes(3, 3, 1, ctx);
 }
 
-function drawMazes(rows: number, columns: number, ctx: CanvasRenderingContext2D) {
+function drawMazes(rows: number, columns: number, showSym: number, ctx: CanvasRenderingContext2D) {
     const width = ctx.canvas.width;
     const height = ctx.canvas.height;
 
@@ -34,10 +40,20 @@ function drawMazes(rows: number, columns: number, ctx: CanvasRenderingContext2D)
     const { total, unique, symCounts } = maze.countMazes();
 
     elements['maze-size'].textContent = `${rows} × ${columns}`;
-    elements.total.textContent = total.toString();
-    elements.unique.textContent = unique.toString();
+    elements.total.textContent = total.toLocaleString();
+    elements.unique.textContent = unique.toLocaleString();
 
-    const mazesPerRow = Math.ceil(Math.sqrt(unique));
+    let displayed = 0;
+    for (let [sym, count] of Object.entries(symCounts)) {
+        if (showSym <= parseInt(sym, 10)) {
+            displayed += count;
+        }
+    }
+
+    elements['display-type'].textContent = displayTypes[showSym.toString() as keyof typeof displayTypes];
+    elements.displayed.textContent = displayed.toLocaleString();
+
+    const mazesPerRow = Math.ceil(Math.sqrt(displayed));
     const spacePerRow = 2 * params.margin + (mazesPerRow - 1) * params.spacing;
 
     let mc = new MazeCanvas(rows, columns, []);
@@ -50,6 +66,9 @@ function drawMazes(rows: number, columns: number, ctx: CanvasRenderingContext2D)
 
     for (let m of maze.allMazes(true)) {
         if (!m.isCanonical) {
+            continue;
+        }
+        if (m.symmetry < showSym) {
             continue;
         }
 

@@ -1,8 +1,8 @@
 export { MazeCanvas };
 class MazeCanvas {
     constructor(rows, columns, walls) {
-        this.wallBorder = 1;
-        this.wallPadding = 1;
+        this.wallBorder = 4;
+        this.wallPadding = 8;
         this.borderColor = 'rgb(0, 0, 0)';
         this.cellColor = 'rgb(255, 255, 255)';
         this.backgroundColor = 'red';
