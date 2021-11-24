@@ -5,7 +5,7 @@ This repo has two concerns:
 1. Generative an exhaustive list of mazes of a given size.
 2. Drawing these mazes in an attractive style using HTML Canvas API.
 
-To render the equations in this README - vist the hosted version here:
+To view the formatted equations in this README - visit the hosted version here:
 
 http://mckoss.com/maze-canvas/
 
@@ -14,13 +14,13 @@ http://mckoss.com/maze-canvas/
 
 # Generating Mazes
 
-It has been trickier than it first seemd to generate mazes of a given size (and count them accurately).  While random maze generation
-is relatively straightforward, enumerating all valid mazes
-exhaustively is more complicated.
+It has been trickier than it first seemed to generate mazes of a given size (and
+count them accurately).  While random maze generation is relatively
+straightforward, enumerating all valid mazes exhaustively is more complicated.
 
-At present, this code has not been optimized to be as fast as
-possible, but it does use some prgressive generation methods
-designed to be more easily optimized.
+At present, this code has not been optimized to be as fast as possible, but it
+does use some prgressive generation methods designed to be more easily
+optimized.
 
 The algorithm can be summarized as:
 
@@ -29,7 +29,7 @@ The algorithm can be summarized as:
 3. Generate all possible combinations of horizontal (floor) walls
    (separating the first and second row).
 4. Repeat for all the rows of the maze.
-5. Test if the maze is "perfect" (there is a unique path from every cell to
+5. Test if the maze is "valid" (there is a unique path from every cell to
     every other cell).
 
 # Maze Facts
@@ -53,7 +53,7 @@ mazes of size NxN (A007341)](https://oeis.org/A007341)  as:
 | 12 |	2,954,540,993,952,788,006,228,764,987,084,443,226,815,814,190,099,484,786,032,640,000 |
 
 An $m \times n$ maze has $m(n-1) + n(m-1)$ internal wall locations.  Of
-those, $m \cdot n - m - n + 1$ walls are used each *perfect* maze (or
+those, $m \cdot n - m - n + 1$ walls are used in a *valid* maze (or
 $({N - 1})^2$ walls for square mazes).
 
 The cells of a maze for a *spanning tree* when considering each cell a
@@ -82,8 +82,20 @@ count rotations and reflections*:
 Jared Tarbell gave a nice talk on generative (art) programming where
 he also discusses [obsession with mazes](https://youtu.be/b_-9UWkgDf8?t=365).
 *Jared claimed there were only 26 unique mazes of size $3 \times 3$ instead of
-28? and he showed a picture of 52 *unique* ones that he generated - possibly
+28, and he showed a picture of 52 *unique* ones that he generated - possibly
 not recognizing that some of his mazes are self-reflections.*
+
+In fact, for a $3 \times 3$ maze there are $\binom{12}{4}$ possible placements
+of 4 walls in 12 possible position:
+
+```
+There are 192 mazes of size 3x3.
+28 are unique:
+---
+21 are not symmetric.
+5 have 2-way symmetry.
+2 have 4-way symmetry.
+```
 
 ![52 mazes](./images/52-mazes.png)
 
@@ -96,17 +108,30 @@ $ npm test
 $ npm run coverage   # For code coverage and performance tracking.
 ```
 
-To count mazes of a given size:
+I find it convenient to use `npm run watch` to compile source files
+incrementally as they are modified and saved.
+
+To count mazes of a given size, use the count-mazes node command line
+app:
 
 ```
 $ scripts/count-mazes.js 4
 Calculating...
+There are binom(24, 9) = 1,307,504 possible wall placements.
 There are 100,352 mazes of size 4x4.
-Elapsed time: 2.12s
-47,324 mazes per second.
+12,600 are unique:
+---
+12,488 are not symmetric.
+112 have 2-way symmetry.
+0 have 4-way symmetry.
+
+One in 13.0 of the wall placements are valid mazes.
+---
+Elapsed time: 2.3s
+43,946 mazes per second.
 ```
 
-I find it convenient to use `tsc --watch` to compile source files
+I find it convenient to use `npm run watch` to compile source files
 incrementally as they are modified and saved.
 
 The source is written in TypeScript, with the build products
@@ -114,8 +139,9 @@ written as ES Module JavaScript files in the `/scripts` directory.
 
 Tests are written in Mocha using (the only sane) TDD-style asserts.
 
-HTML formatted coverage reports will be generated in the `/coverage` directory as well as summarized in text at the end of tests
-run with the `npm run coverage` command.
+HTML formatted coverage reports will be generated in the `/coverage` directory
+as well as summarized in text at the end of tests run with the `npm run
+coverage` command.
 
 # Future optimizations and features
 
@@ -126,10 +152,7 @@ run with the `npm run coverage` command.
    identical intermediate row configuations (dynamic programming).
 3. Cut off maze generation that is not a "canonical" representive.  Most mazes
    have 7 other symetrically related mazes that are identical to them.
-4. Produce count of unique mazes up to symmetrical rotations and reflections.
-   (also count mazes that have 2, 4, and 8-way symmetry).
-5. Command line maze counter.
-6. Web page generator with Canvas drawing (and customization).
+4. Web page generator with Canvas drawing (and customization).
 
 
 <script defer>
@@ -139,6 +162,7 @@ MathJax = {
   }
 };
 </script>
+
 <script id="MathJax-script" defer
   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
