@@ -6,6 +6,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
+    "watch": "tsc --watch",
     "test": "mocha --ui tdd scripts/tests",
     "coverage": "c8 --reporter=text --reporter=html npm test"
   },
