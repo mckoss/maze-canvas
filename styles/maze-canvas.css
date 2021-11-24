@@ -1,0 +1,36 @@
+:root {
+    --codeFont: 'Roboto Mono', monospace;
+    --shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  }
+
+  body {
+    font-family: Verdana, san-serif;
+    max-width: 750px;
+    margin:  auto;
+    line-height: 1.5rem;
+    padding: 0 1rem 2rem 1rem;
+  }
+
+  li {
+    margin: 0.1rem;
+  }
+
+  h1 {
+    text-align: center;
+  }
+
+  #error {
+    visibility: hidden;
+    background-color: lightpink;
+    color: red;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    padding: 0.6rem;
+    position: relative;
+    margin: -1rem 0;
+    z-index: 1;
+  }
+
+  .heading {
+    font-weight: bold;
+    background-color: floralwhite;
+  }
