@@ -5,10 +5,11 @@ class MazeCanvas {
     rows: number;
     columns: number;
 
-    wallBorder = 6;
-    wallPadding = 15;
+    wallBorder = 1;
+    wallPadding = 1;
     borderColor = 'rgb(0, 0, 0)';
     cellColor = 'rgb(255, 255, 255)';
+    backgroundColor = 'red';
 
     cellSize: number = 0;
     cellStep: number = 0;
@@ -73,6 +74,65 @@ class MazeCanvas {
             ctx.rect(x + cellOffset, y + cellOffset, this.cellSize, this.cellSize);
             ctx.closePath();
             ctx.fill();
+            }
+        }
+
+        let cellDistance: number;
+        if (this.wallPadding === 0) {
+            cellDistance = this.wallBorder;
+        } else {
+            cellDistance = 2 * this.wallBorder + this.wallPadding;
+        }
+
+        let wallIndex = 0;
+        for (let row = 0; row < this.rows; row++) {
+            const y = row * this.cellStep;
+
+            // Connect the cells in this row.
+            for (let column = 0; column < this.columns - 1; column++) {
+                const x = column * this.cellStep;
+
+                // Connect to cell to the right
+                if (!this.walls[wallIndex]) {
+                    ctx.fillStyle = this.borderColor;
+                    ctx.beginPath();
+                    ctx.rect(x + borderedSize, y, this.wallPadding, borderedSize);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    ctx.fillStyle = this.cellColor;
+                    ctx.beginPath();
+                    ctx.rect(x + this.wallBorder + this.cellSize, y + this.wallBorder,
+                        cellDistance, this.cellSize);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+                wallIndex++;
+            }
+
+            if (row === this.rows - 1) {
+                break;
+            }
+
+            for (let column = 0; column < this.columns; column++) {
+                const x = column * this.cellStep;
+
+                // Connect to cell below
+                if (!this.walls[wallIndex]) {
+                    ctx.fillStyle = this.borderColor;
+                    ctx.beginPath();
+                    ctx.rect(x, y + borderedSize, borderedSize, this.wallPadding);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    ctx.fillStyle = this.cellColor;
+                    ctx.beginPath();
+                    ctx.rect(x + this.wallBorder, y + this.wallBorder + this.cellSize,
+                        this.cellSize, cellDistance);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+                wallIndex++;
             }
         }
     }

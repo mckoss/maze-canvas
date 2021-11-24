@@ -10,7 +10,8 @@ const elements = bindElements('maze-canvas', 'error', 'rows', 'columns',
 
 const params = {
     margin: 20,
-    spacing: 15,
+    spacing: 3,
+    backgroundColor: 'rgb(177, 31, 31)',
 };
 
 function initializePage() {
@@ -19,10 +20,10 @@ function initializePage() {
 
     const width = mazeCanvas.width;
     const height = mazeCanvas.height;
-    ctx.fillStyle = 'rgb(177, 31, 31)';
+    ctx.fillStyle = params.backgroundColor;
     ctx.fillRect(0, 0, width, height);
 
-    drawMazes(3, 3, ctx);
+    drawMazes(4, 3, ctx);
 }
 
 function drawMazes(rows: number, columns: number, ctx: CanvasRenderingContext2D) {

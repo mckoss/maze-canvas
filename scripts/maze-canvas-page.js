@@ -4,16 +4,17 @@ export { initializePage };
 const elements = bindElements('maze-canvas', 'error', 'rows', 'columns', 'generate', 'maze-size', 'total', 'unique');
 const params = {
     margin: 20,
-    spacing: 15,
+    spacing: 3,
+    backgroundColor: 'rgb(177, 31, 31)',
 };
 function initializePage() {
     const mazeCanvas = elements['maze-canvas'];
     const ctx = mazeCanvas.getContext('2d');
     const width = mazeCanvas.width;
     const height = mazeCanvas.height;
-    ctx.fillStyle = 'rgb(177, 31, 31)';
+    ctx.fillStyle = params.backgroundColor;
     ctx.fillRect(0, 0, width, height);
-    drawMazes(3, 3, ctx);
+    drawMazes(4, 3, ctx);
 }
 function drawMazes(rows, columns, ctx) {
     const width = ctx.canvas.width;
@@ -26,7 +27,7 @@ function drawMazes(rows, columns, ctx) {
     const mazesPerRow = Math.ceil(Math.sqrt(unique));
     const spacePerRow = 2 * params.margin + (mazesPerRow - 1) * params.spacing;
     let mc = new MazeCanvas(rows, columns, []);
-    mc.sizeFromWidth((width - spacePerRow) / mazesPerRow);
+    mc.sizeFromWidth(Math.floor((width - spacePerRow) / mazesPerRow));
     const stepDim = [mc.mazeSize[0] + params.spacing, mc.mazeSize[1] + params.spacing];
     let pos = [params.margin, params.margin];
     let col = 0;
