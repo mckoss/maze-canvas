@@ -75,7 +75,8 @@ count rotations and reflections*:
 | 1 | 1 |
 | 2 | 1 |
 | 3 | 28 |
-| 4 | 12600 |
+| 4 | 12,600 |
+| 5 | 69,699,849 |
 
 *The $3 \times 3$ mazes form a nice little "alphabet" of 28 symbols.*
 
@@ -85,8 +86,8 @@ he also discusses [obsession with mazes](https://youtu.be/b_-9UWkgDf8?t=365).
 28, and he showed a picture of 52 *unique* ones that he generated - possibly
 not recognizing that some of his mazes are self-reflections.*
 
-In fact, for a $3 \times 3$ maze there are $\binom{12}{4}$ possible placements
-of 4 walls in 12 possible position:
+In fact, for a $3 \times 3$ maze there are $\binom{12}{4} = 495$ placements
+of 4 walls in 12 possible positions:
 
 ```
 There are 192 mazes of size 3x3.
@@ -95,6 +96,19 @@ There are 192 mazes of size 3x3.
 21 are not symmetric.
 5 have 2-way symmetry.
 2 have 4-way symmetry.
+
+There are 100,352 mazes of size 4x4.
+12,600 are unique:
+---
+12,488 are not symmetric.
+112 have 2-way symmetry.
+
+There are 557,568,000 mazes of size 5x5.
+69,699,849 are unique:
+---
+69,692,175 are not symmetric.
+7,626 have 2-way symmetry.
+48 have 4-way symmetry.
 ```
 
 ![52 mazes](./images/52-mazes.png)
