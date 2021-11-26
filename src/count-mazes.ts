@@ -3,7 +3,7 @@
 import { argv, hrtime } from 'process';
 
 import { Maze } from './maze-generator.js';
-import { pluralize, binomial } from './util.js';
+import { pluralize, binomial, Columnize } from './util.js';
 
 let args = argv.slice(2);
 let showSym = 0;
@@ -75,25 +75,36 @@ const elapsedSeconds = hrSeconds(hrtime(startTime));
 console.log(`There are ${counts.total.toLocaleString()} mazes of size ${rows}x${cols}.`);
 console.log(`${pluralize(counts.unique, 'is', 'are')} unique:`);
 console.log('---')
-console.log(`${pluralize(counts.symCounts["1"], 'is', 'are')} not symmetric.`);
-console.log(`${pluralize(counts.symCounts["2"], 'has', 'have')} 2-way symmetry.`);
-console.log(`${pluralize(counts.symCounts["4"], 'has', 'have')} 4-way symmetry.`);
 
-if (maze.isSquare) {
-    console.log(`${pluralize(counts.symCounts["8"], 'has', 'have')} 8-way symmetry.`);
-}
+const headings: string[] = [];
+headings[1] = `${pluralize(counts.symCounts[1], 'is', 'are')} asymmetric.`;
+headings[2] = `${pluralize(counts.symCounts[2], 'has', 'have')} 2-way symmetry.`;
+headings[4] = `${pluralize(counts.symCounts[4], 'has', 'have')} 4-way symmetry.`;
 
-if (showSym !== 0) {
-    for (let m of maze.allMazes(true)) {
-        if (!m.isCanonical) {
-            continue;
+let buf = new Columnize();
+
+for (let sym of [1, 2, 4]) {
+    buf.flushAndReset();
+    if (showSym !== 0 && sym > 1) {
+        console.log();
+    }
+    console.log(headings[sym]);
+
+    if (showSym !== 0) {
+        for (let m of maze.allMazes(true)) {
+            if (!m.isCanonical || m.symmetry !== sym) {
+                continue;
+            }
+            if (m.symmetry < showSym) {
+                continue;
+            }
+
+            buf.log(m.toString());
         }
-        if (m.symmetry < showSym) {
-            continue;
-        }
-        console.log(`${m.toString().slice(0, -1)}${m.symmetry !== 1 ? ` (${m.symmetry})` : ''}`);
     }
 }
+
+buf.flush();
 
 console.log(`\nOne in ${(candidates/counts.total).toFixed(1)} of the wall placements are valid mazes.`);
 
