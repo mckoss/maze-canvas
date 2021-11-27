@@ -81,7 +81,8 @@ headings[1] = `${pluralize(counts.symCounts[1], 'is', 'are')} asymmetric.`;
 headings[2] = `${pluralize(counts.symCounts[2], 'has', 'have')} 2-way symmetry.`;
 headings[4] = `${pluralize(counts.symCounts[4], 'has', 'have')} 4-way symmetry.`;
 
-let buf = new Columnize();
+const buf = new Columnize();
+buf.indent = 2;
 
 for (let sym of [1, 2, 4]) {
     buf.flushAndReset();

@@ -400,24 +400,13 @@ class Maze {
 
     toString(): string {
         let result = '';
-        result += '.' + '_.'.repeat(this.cols) + '\n';
+        result += ' ' + '_'.repeat(2* this.cols - 1) + ' \n';
 
         for (let row = 0; row < this.rows; row++) {
             result += '|';
             for (let col = 0; col < this.cols; col++) {
-                if (this.hasWall(row, col, Direction.right)) {
-                    result += ' |';
-                } else {
-                    result += '  ';
-                }
-            }
-            result += '\n.';
-            for (let col = 0; col < this.cols; col++) {
-                if (this.hasWall(row, col, Direction.down)) {
-                    result += '_.';
-                } else {
-                    result += ' .';
-                }
+                result += this.hasWall(row, col, Direction.down) ? '_' : ' ';
+                result += this.hasWall(row, col, Direction.right) ? '|' : ' ';
             }
             result += '\n';
         }

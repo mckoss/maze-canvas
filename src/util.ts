@@ -34,6 +34,7 @@ class Columnize {
     colWidth = 80;
     lines: string[] = [];
     curWidth = 0;
+    indent = 0;
     gap = 1;
     flushCount = 0;
     fnOut: StringOut = console.log as StringOut;
@@ -57,17 +58,18 @@ class Columnize {
             this.flush();
         }
 
-        // Make sure we have enough ouput lines accumulating.
+        // Make sure we have enough ouput lines to accumulate.
         while (this.lines.length < newLines.length) {
             this.lines.push('');
         }
 
         // Append new lines to output buffer.
+        let spacing = this.curWidth === 0 ? this.indent : this.gap;
         for (let i = 0; i < newLines.length; i++) {
-            this.lines[i] += ' '.repeat(this.gap) + newLines[i];
+            this.lines[i] += ' '.repeat(spacing) + newLines[i];
         }
 
-        this.curWidth += maxWidth + this.gap;
+        this.curWidth += maxWidth + spacing;
 
         // Fill right all strings to current max width.
         for (let i = 0; i < this.lines.length; i++) {
