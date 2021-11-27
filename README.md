@@ -80,14 +80,10 @@ count rotations and reflections*:
 
 *The $3 \times 3$ mazes form a nice little "alphabet" of 28 symbols.*
 
+![3x3 Mazes](./images/3x3-mazes.png)
+
 Jared Tarbell gave a nice talk on generative (art) programming where
 he also discusses [obsession with mazes](https://youtu.be/b_-9UWkgDf8?t=365).
-*Jared claimed there were only 26 unique mazes of size $3 \times 3$ instead of
-28, and he showed a picture of 52 *unique* ones that he generated - possibly
-not recognizing that some of his mazes are self-reflections.*
-
-In fact, for a $3 \times 3$ maze there are $\binom{12}{4} = 495$ placements
-of 4 walls in 12 possible positions:
 
 ```
 There are 192 mazes of size 3x3.
@@ -110,8 +106,6 @@ There are 557,568,000 mazes of size 5x5.
 7,626 have 2-way symmetry.
 48 have 4-way symmetry.
 ```
-
-![52 mazes](./images/52-mazes.png)
 
 # Using this Repo
 
