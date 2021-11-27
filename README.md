@@ -68,7 +68,8 @@ unique mazes in Perl in 2015:
 
 
 He answers the question, *how many unique mazes are there if you don't double
-count rotations and reflections*:
+count rotations and reflections - up to 4x4 mazes* (extended
+to 6x6 mazes by Paul Kim in his [2019 Doctoral Thesis](https://etd.ohiolink.edu/apexprod/rws_etd/send_file/send?accession=osu1563286393237089&disposition=inline)):
 
 | N | Unique Mazes |
 |---|---|
@@ -77,6 +78,7 @@ count rotations and reflections*:
 | 3 | 28 |
 | 4 | 12,600 |
 | 5 | 69,699,849 |
+| 6 | 4,070,693,024,640 |
 
 *The $3 \times 3$ mazes form a nice little "alphabet" of 28 symbols.*
 
@@ -106,6 +108,18 @@ There are 557,568,000 mazes of size 5x5.
 7,626 have 2-way symmetry.
 48 have 4-way symmetry.
 ```
+
+A currently unexplored sequence is the count of *symmetric* mazes on an $n \times n$ grid:
+
+| N | Symmetric Mazes | 2-symmetric | 4-symmetric |
+|---|---|---|---|
+| 1 | 1 | 1 | 1 |
+| 2 | 1 | 1 | - |
+| 3 | 7 | 5 | 2 |
+| 4 | 112 | 112 | - |
+| 5 | 7,674 | 7,626 | 48 |
+
+*Where a symmetry includes any reflection or rotation that maps the maze back to itself.*
 
 # Using this Repo
 
