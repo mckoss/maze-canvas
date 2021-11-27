@@ -128,6 +128,31 @@ suite("Maze", () => {
         }
     });
 
+    test("hasWall out-of-bounds", () => {
+        const maze = new Maze(4, 4);
+
+        const tests: [[number, number, Direction], boolean][] = [
+            [ [-1, 0, Direction.up], false ],
+            [ [-1, 0, Direction.right], false ],
+            [ [-1, 0, Direction.down], false ],
+            [ [-1, 0, Direction.left], false ],
+
+            [ [0, -1, Direction.up], false ],
+            [ [0, -1, Direction.right], false ],
+            [ [0, -1, Direction.down], false ],
+            [ [0, -1, Direction.left], false ],
+
+            [ [-1, -1, Direction.up], false ],
+            [ [-1, -1, Direction.right], false ],
+            [ [-1, -1, Direction.down], false ],
+            [ [-1, -1, Direction.left], false ],
+        ];
+
+        for (let test of tests) {
+            assert.equal(maze.hasWall(...test[0]), test[1], `${test[0]}`);
+        }
+    });
+
     test("forAllVerticalWalls", () => {
         const maze = new Maze(4, 4);
         const expected = [

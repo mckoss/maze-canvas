@@ -1,4 +1,4 @@
-export { pluralize, binomial, Columnize };
+export { pluralize, binomial, Columnize, unicodeBoxCode };
 function pluralize(n, word, pluralWord) {
     const show = [word, pluralWord || word + 's'][n === 1 ? 0 : 1];
     return `${n.toLocaleString()} ${show}`;
@@ -77,5 +77,13 @@ class Columnize {
         this.flush();
         this.flushCount = 0;
     }
+}
+const boxCodes = [
+    0x20, 0x2576, 0x2577, 0x250C, 0x2574, 0x2500, 0x2510, 0x252C,
+    0x2575, 0x2514, 0x2502, 0x251C, 0x2518, 0x2534, 0x2524, 0x253C
+];
+function unicodeBoxCode(up, right, down, left) {
+    const index = +right + 2 * +down + 4 * +left + 8 * +up;
+    return String.fromCodePoint(boxCodes[index]);
 }
 //# sourceMappingURL=util.js.map

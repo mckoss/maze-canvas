@@ -5,12 +5,16 @@ import { pluralize, binomial, Columnize } from './util.js';
 let args = argv.slice(2);
 let showSym = 0;
 let showUnique = false;
+let useBoxes = false;
 let rows = 0;
 let cols = 0;
 for (let arg of args) {
     if (arg.slice(0, 2) === '--') {
         if (arg.slice(2) === 'help') {
             help();
+        }
+        else if (arg.slice(2) === 'boxes') {
+            useBoxes = true;
         }
         else if (arg.slice(2, 6) === 'show') {
             if (arg.slice(6, 7) === '=') {
@@ -89,7 +93,12 @@ for (let sym of [1, 2, 4]) {
             if (m.symmetry < showSym) {
                 continue;
             }
-            buf.log(m.toString());
+            if (useBoxes) {
+                buf.log(m.toUnicode());
+            }
+            else {
+                buf.log(m.toString());
+            }
         }
     }
 }
@@ -109,6 +118,7 @@ function help(err) {
     console.log(" --show: Print all unique mazes.");
     console.log(" --show=2: Print all 2-way symmetrical mazes.");
     console.log(" --show=4: Print all 4-way symmetrical mazes.");
+    console.log(" --boxes: Use Unicode box characters to draw mazes.");
     console.log(" <rows>: Number of rows in the maze");
     console.log(" <cols>: Number of columns in the maze (same as rows if not given)");
     process.exit(1);

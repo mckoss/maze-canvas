@@ -1,3 +1,5 @@
+import { unicodeBoxCode } from "./util.js";
+
 export { tuples, Maze, MazeCount, Direction, TESTING };
 
 // Exposed for testing - not part of the public API.
@@ -273,20 +275,28 @@ class Maze {
         if (index === -1) {
             return true;
         }
+        if (index === -2) {
+            return false;
+        }
         return this.walls[index];
     }
 
     wallIndex(row: number, col:  number, dir: Direction): number {
+        // Out of bounds
+        if (row < 0 || row >= this.rows || col < 0 || col >= this.cols) {
+            return -2;
+        }
+
         // Each row has cols - 1 vertical walls and cols horizontal walls.
         if (dir === Direction.up) {
             row--;
-            if (row < 0) {
+            if (row === -1) {
                 return -1;
             }
             dir = Direction.down;
         } else if (dir === Direction.left) {
             col--;
-            if (col < 0) {
+            if (col === -1) {
                 return -1;
             }
             dir = Direction.right;
@@ -410,6 +420,38 @@ class Maze {
             }
             result += '\n';
         }
+        return result;
+    }
+
+    toUnicode(): string {
+        let result = '';
+
+        for (let row = 0; row < this.rows; row++) {
+            // UL intersection of (row, 0)
+            result += unicodeBoxCode(
+                this.hasWall(row - 1, 0, Direction.left),
+                this.hasWall(row, 0, Direction.up),
+                this.hasWall(row, 0, Direction.left),
+                false);
+            for (let col = 0; col < this.cols; col++) {
+                // UR intersection of (row, col)
+                result += unicodeBoxCode(
+                    this.hasWall(row - 1, col, Direction.right),
+                    this.hasWall(row, col + 1, Direction.up),
+                    this.hasWall(row, col, Direction.right),
+                    this.hasWall(row, col, Direction.up));
+            }
+            result += '\n';
+        }
+        // LL corner of maze
+        result += unicodeBoxCode(true, true, false, false);
+        for (let col = 0; col < this.cols; col++) {
+            // LR corner of (rows - 1, col)
+            result += unicodeBoxCode(
+                this.hasWall(this.rows - 1, col, Direction.right),
+                col < this.cols - 1, false, true);
+        }
+        result += '\n';
         return result;
     }
 }
