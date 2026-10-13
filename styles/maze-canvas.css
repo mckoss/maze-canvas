@@ -34,3 +34,33 @@
     font-weight: bold;
     background-color: floralwhite;
   }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    margin: 1rem 0;
+  }
+
+  .controls select {
+    font: inherit;
+    margin-left: 0.3rem;
+  }
+
+  #stats {
+    margin-bottom: 1rem;
+  }
+
+  /* Mazes are drawn on a stack of canvas tiles over the red background. */
+  .maze-list {
+    background-color: rgb(177, 31, 31);
+    padding: 20px;
+  }
+
+  .maze-list[hidden] {
+    display: none;
+  }
+
+  .maze-list canvas {
+    display: block;
+  }

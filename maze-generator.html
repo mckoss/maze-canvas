@@ -26,15 +26,33 @@
         reachable from any other cell via exactly one path.
     </p>
 
-    <div id='stats'>
-        There are <span id="total">0</span> mazes of size
-        <span id="maze-size">0 × 0</span> (<span id="unique">0</span> unique).<br>
-        (Displaying the <span id="displayed">0</span> <span id="display-type">all</span> mazes)
-    </div>
+    <form id="controls" class="controls">
+        <label>Rows
+            <select id="rows">
+                <option>2</option>
+                <option selected>3</option>
+                <option>4</option>
+            </select>
+        </label>
+        <label>Columns
+            <select id="columns">
+                <option>2</option>
+                <option selected>3</option>
+                <option>4</option>
+            </select>
+        </label>
+        <label>Show
+            <select id="show">
+                <option value="1" selected>All unique</option>
+                <option value="2">Symmetric only</option>
+                <option value="4">4-way symmetric only</option>
+            </select>
+        </label>
+    </form>
 
-    <div class="maze-canvas-container">
-        <canvas id="maze-canvas" width="750" height="750"></canvas>
-    </div>
+    <div id="stats" aria-live="polite"></div>
+
+    <div id="maze-list" class="maze-list"></div>
 
     <div id="error"></div>
 
