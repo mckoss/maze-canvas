@@ -7,9 +7,11 @@ This repo has two concerns:
 
 To view the formatted equations in this README - visit the hosted version here:
 
-http://mckoss.com/maze-canvas/
+https://mckoss.com/maze-canvas/
 
-[![Node.js CI](https://github.com/mckoss/maze-canvas/actions/workflows/main.yml/badge.svg)](https://github.com/mckoss/maze-canvas/actions/workflows/main.yml)
+Try the app: [Exhaustive Maze Generator](https://mckoss.com/maze-canvas/maze-generator.html)
+
+[![Build and deploy](https://github.com/mckoss/maze-canvas/actions/workflows/pages.yml/badge.svg)](https://github.com/mckoss/maze-canvas/actions/workflows/pages.yml)
 
 
 # Generating Mazes
@@ -69,7 +71,13 @@ unique mazes in Perl in 2015:
 
 He answers the question, *how many unique mazes are there if you don't double
 count rotations and reflections - up to 4x4 mazes* (extended
-to 6x6 mazes by Paul Kim in his [2019 Doctoral Thesis](https://etd.ohiolink.edu/apexprod/rws_etd/send_file/send?accession=osu1563286393237089&disposition=inline)):
+to 6x6 mazes by Paul Kim in his [2019 Doctoral Thesis](https://etd.ohiolink.edu/apexprod/rws_etd/send_file/send?accession=osu1563286393237089&disposition=inline)).
+
+I submitted this sequence to the OEIS as [A349718](https://oeis.org/A349718),
+*the number of spanning trees in the $n \times n$ grid graph where rotations
+and reflections are not counted as distinct*.  Andrew Howroyd then extended
+it to $n = 40$ by applying Burnside's lemma and Kirchhoff's matrix tree
+theorem:
 
 | N | Unique Mazes |
 |---|---|
@@ -79,6 +87,11 @@ to 6x6 mazes by Paul Kim in his [2019 Doctoral Thesis](https://etd.ohiolink.edu/
 | 4 | 12,600 |
 | 5 | 69,699,849 |
 | 6 | 4,070,693,024,640 |
+| 7 | 2,484,046,163,254,367,574 |
+| 8 | 15,778,915,364,062,895,746,351,104 |
+| 9 | 1,040,828,457,711,477,326,843,036,225,608,036 |
+| 10 | 711,789,875,509,887,224,494,712,166,194,197,254,144,000 |
+| 11 | 5,040,627,715,175,514,814,159,607,456,023,227,379,139,001,458,908,168 |
 
 *The $3 \times 3$ mazes form a nice little "alphabet" of 28 symbols.*
 
@@ -109,7 +122,7 @@ There are 557,568,000 mazes of size 5x5.
 48 have 4-way symmetry.
 ```
 
-A currently unexplored sequence is the count of *symmetric* mazes on an $n \times n$ grid:
+A currently unexplored sequence (not yet in the OEIS) is the count of *symmetric* mazes on an $n \times n$ grid:
 
 | N | Symmetric Mazes | 2-symmetric | 4-symmetric |
 |---|---|---|---|
