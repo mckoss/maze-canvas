@@ -14,7 +14,7 @@ The counts are computed two independent ways:
 The results are also checked against the exhaustive counts for n <= 5 and,
 through Burnside's lemma, against A349718 (all unique mazes).
 
-See symmetric-mazes.md for the derivation.
+See CALCULATION.md (in the repository root) for the derivation.
 
 Usage:
     python3 symmetric_mazes.py [N]           counts for n = 1..N (default 12)

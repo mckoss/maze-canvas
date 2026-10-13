@@ -77,7 +77,8 @@ I submitted this sequence to the OEIS as [A349718](https://oeis.org/A349718),
 *the number of spanning trees in the $n \times n$ grid graph where rotations
 and reflections are not counted as distinct*.  Andrew Howroyd then extended
 it to $n = 40$ by applying Burnside's lemma and Kirchhoff's matrix tree
-theorem:
+theorem (see [CALCULATION.md](CALCULATION.md) for how these counts are
+calculated, by enumeration and with his PARI program):
 
 | N | Unique Mazes |
 |---|---|
@@ -125,9 +126,9 @@ There are 557,568,000 mazes of size 5x5.
 A sequence not yet in the OEIS is the count of *symmetric* mazes on an
 $n \times n$ grid, mapped to themselves by some rotation or reflection (and,
 as above, counted once per set of related mazes).  The exhaustive search counts
-them up to $5 \times 5$; an [analysis of symmetric mazes](analysis/symmetric-mazes.md)
-gives an exact closed form and extends the sequence (computed by
-[symmetric_mazes.py](analysis/symmetric_mazes.py)):
+them up to $5 \times 5$; the analysis in
+[CALCULATION.md](CALCULATION.md#symmetric-mazes) gives an exact closed form and
+extends the sequence (computed by [symmetric_mazes.py](analysis/symmetric_mazes.py)):
 
 | N | Symmetric Mazes | 2-symmetric | 4-symmetric |
 |---|---|---|---|

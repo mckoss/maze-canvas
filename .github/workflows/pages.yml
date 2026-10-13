@@ -38,7 +38,7 @@ jobs:
       - name: Stage site
         run: |
           mkdir _site_src
-          cp -r README.md LICENSE maze-generator.html analysis images scripts src styles _site_src/
+          cp -r README.md CALCULATION.md LICENSE maze-generator.html analysis images scripts src styles _site_src/
       - uses: actions/jekyll-build-pages@v1
         with:
           source: ./_site_src
