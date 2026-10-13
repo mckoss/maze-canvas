@@ -1,97 +1,233 @@
-import { Maze } from './maze-generator.js';
 import { MazeCanvas } from './maze-canvas.js';
+import { layoutGrid, GridLayout } from './maze-layout.js';
+import type { MazeSearchResult } from './maze-search.js';
+import { pluralize } from './util.js';
 
 export { initializePage };
 
 type ElementBindings = { [key: string]: HTMLElement };
 
-const elements = bindElements('maze-canvas', 'error', 'rows', 'columns',
-'generate', 'maze-size', 'total', 'unique', 'display-type', 'displayed');
+const elements = bindElements('maze-list', 'error', 'rows', 'columns', 'show',
+    'stats');
 
-const params = {
-    margin: 20,
-    spacing: 8,
-    backgroundColor: 'rgb(177, 31, 31)',
-};
+// The list is drawn as a stack of canvas tiles no taller than this
+// (a single canvas for thousands of mazes would exceed browser limits).
+// Only tiles near the viewport hold a drawing.
+const MAX_TILE_HEIGHT = 2000;
 
-const displayTypes = {
+const displayTypes: { [sym: string]: string } = {
     "1": "unique",
-    "2": "2-symmetric",
-    "4": "4-symmetric",
+    "2": "symmetric",
+    "4": "4-way symmetric",
 };
+
+// Search results by size ("rows x cols").
+const results = new Map<string, MazeSearchResult>();
+
+let worker: Worker | undefined;
+// Size the worker is searching.
+let searchKey = '';
+let observer: IntersectionObserver | undefined;
+let renderedWidth = 0;
 
 function initializePage() {
-    const mazeCanvas = elements['maze-canvas'] as HTMLCanvasElement;
-    const ctx = mazeCanvas.getContext('2d')!;
+    for (let id of ['rows', 'columns', 'show']) {
+        elements[id].addEventListener('change', update);
+    }
 
-    const width = mazeCanvas.width;
-    const height = mazeCanvas.height;
-    ctx.fillStyle = params.backgroundColor;
-    ctx.fillRect(0, 0, width, height);
+    let resizeTimer: number | undefined;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = window.setTimeout(() => {
+            if (contentWidth() !== renderedWidth) {
+                update();
+            }
+        }, 200);
+    });
 
-    drawMazes(3, 3, 1, ctx);
+    update();
 }
 
-function drawMazes(rows: number, columns: number, showSym: number, ctx: CanvasRenderingContext2D) {
-    const width = ctx.canvas.width;
-    const height = ctx.canvas.height;
+function selected(id: string): number {
+    return parseInt((elements[id] as HTMLSelectElement).value, 10);
+}
 
-    const maze = new Maze(rows, columns);
-    const { total, unique, symCounts } = maze.countMazes();
+function update() {
+    const rows = selected('rows');
+    const cols = selected('columns');
+    const key = `${rows}x${cols}`;
 
-    elements['maze-size'].textContent = `${rows} × ${columns}`;
-    elements.total.textContent = total.toLocaleString();
-    elements.unique.textContent = unique.toLocaleString();
-
-    let displayed = 0;
-    for (let [sym, count] of Object.entries(symCounts)) {
-        if (showSym <= parseInt(sym, 10)) {
-            displayed += count;
-        }
+    const result = results.get(key);
+    if (result) {
+        render(result, selected('show'));
+        return;
     }
 
-    elements['display-type'].textContent = displayTypes[showSym.toString() as keyof typeof displayTypes];
-    elements.displayed.textContent = displayed.toLocaleString();
+    search(rows, cols, key);
+}
 
-    const mazesPerRow = Math.ceil(Math.sqrt(displayed));
-    const spacePerRow = 2 * params.margin + (mazesPerRow - 1) * params.spacing;
-
-    let mc = new MazeCanvas(rows, columns, []);
-    mc.sizeFromWidth(Math.floor((width - spacePerRow) / mazesPerRow));
-
-    const stepDim = [mc.mazeSize[0] + params.spacing, mc.mazeSize[1] + params.spacing];
-
-    let pos: [number, number] = [params.margin, params.margin];
-    let col = 0;
-
-    for (let m of maze.allMazes(true)) {
-        if (!m.isCanonical) {
-            continue;
-        }
-        if (m.symmetry < showSym) {
-            continue;
-        }
-
-        mc.setWalls(m.walls);
-
-        ctx.save();
-        ctx.translate(pos[0], pos[1]);
-
-        mc.drawMaze(ctx);
-
-        ctx.restore();
-
-        col += 1;
-        if (col >= mazesPerRow) {
-            pos[0] = params.margin;
-            pos[1] += stepDim[1];
-            col = 0;
-        } else {
-            pos[0] += stepDim[0];
-        }
+function search(rows: number, cols: number, key: string) {
+    // The running search will show the current options when it's done.
+    if (worker && key === searchKey) {
+        return;
     }
 
+    worker?.terminate();
+    searchKey = key;
+    clearList();
+    setOptionCounts();
+    elements.stats.textContent = `Searching ${rows} × ${cols} mazes…`;
 
+    const w = new Worker(new URL('./maze-worker.js', import.meta.url), { type: 'module' });
+    worker = w;
+
+    w.onmessage = (e) => {
+        if (e.data.type === 'progress') {
+            elements.stats.textContent =
+                `Searching ${rows} × ${cols} mazes… ${e.data.found.toLocaleString()} found`;
+            return;
+        }
+        w.terminate();
+        worker = undefined;
+        results.set(key, e.data.result);
+        update();
+    };
+
+    w.onerror = (e) => {
+        worker = undefined;
+        showError(`Maze search failed: ${e.message}`);
+    };
+
+    w.postMessage({ rows, cols });
+}
+
+function render(result: MazeSearchResult, showSym: number) {
+    const { rows, cols, wallCount } = result;
+
+    // Indices of the unique mazes to display.
+    const shown: number[] = [];
+    result.symmetries.forEach((sym, i) => {
+        if (sym >= showSym) {
+            shown.push(i);
+        }
+    });
+
+    elements.stats.textContent =
+        `There are ${result.total.toLocaleString()} mazes of size ${rows} × ${cols} ` +
+        `(${result.unique.toLocaleString()} unique). ` +
+        `Displaying ${pluralize(shown.length, displayTypes[showSym] + ' maze')}.`;
+    setOptionCounts(result);
+
+    clearList();
+    const list = elements['maze-list'];
+    list.hidden = false;
+    const width = contentWidth();
+    renderedWidth = width;
+    list.hidden = shown.length === 0;
+
+    const mc = new MazeCanvas(rows, cols, []);
+    const layout = layoutGrid(shown.length, rows, cols, width, mc);
+    const rowsPerTile = Math.max(1, Math.floor(MAX_TILE_HEIGHT / layout.step[1]));
+
+    const tiles = new Map<Element, () => void>();
+    observer = new IntersectionObserver((entries) => {
+        for (let entry of entries) {
+            const canvas = entry.target as HTMLCanvasElement;
+            if (entry.isIntersecting) {
+                tiles.get(canvas)!();
+            } else {
+                // Release the drawing; the CSS size keeps its place in the list.
+                canvas.width = 0;
+                canvas.height = 0;
+            }
+        }
+    }, { rootMargin: '1500px 0px' });
+
+    for (let firstRow = 0; firstRow < layout.numRows; firstRow += rowsPerTile) {
+        const lastRow = Math.min(firstRow + rowsPerTile, layout.numRows);
+        const height = lastRow === layout.numRows ?
+            layout.height - firstRow * layout.step[1] :
+            (lastRow - firstRow) * layout.step[1];
+
+        const canvas = document.createElement('canvas');
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+        canvas.width = 0;
+        canvas.height = 0;
+        list.appendChild(canvas);
+
+        tiles.set(canvas, () => drawTile(canvas, width, height, firstRow, lastRow,
+            layout, mc, (i) => {
+                const start = shown[i] * wallCount;
+                return result.walls.subarray(start, start + wallCount);
+            }, shown.length));
+        observer.observe(canvas);
+    }
+}
+
+function drawTile(canvas: HTMLCanvasElement, width: number, height: number,
+    firstRow: number, lastRow: number, layout: GridLayout, mc: MazeCanvas,
+    wallsOf: (i: number) => Uint8Array, count: number) {
+    if (canvas.width !== 0) {
+        return;
+    }
+
+    const scale = window.devicePixelRatio || 1;
+    canvas.width = Math.round(width * scale);
+    canvas.height = Math.round(height * scale);
+    const ctx = canvas.getContext('2d')!;
+    ctx.scale(scale, scale);
+
+    for (let row = firstRow; row < lastRow; row++) {
+        for (let col = 0; col < layout.perRow; col++) {
+            const i = row * layout.perRow + col;
+            if (i >= count) {
+                return;
+            }
+            mc.setWalls(wallsOf(i));
+            ctx.save();
+            ctx.translate(layout.offsetX + col * layout.step[0],
+                (row - firstRow) * layout.step[1]);
+            mc.drawMaze(ctx);
+            ctx.restore();
+        }
+    }
+}
+
+function clearList() {
+    observer?.disconnect();
+    observer = undefined;
+    elements['maze-list'].replaceChildren();
+    elements['maze-list'].hidden = true;
+    elements.error.style.visibility = 'hidden';
+}
+
+// Show the number of unique mazes of each kind in the Show menu.
+function setOptionCounts(result?: MazeSearchResult) {
+    for (let option of (elements.show as HTMLSelectElement).options) {
+        const label = option.dataset.label ?? option.text;
+        option.dataset.label = label;
+        if (result === undefined) {
+            option.text = label;
+            continue;
+        }
+        const minSym = parseInt(option.value, 10);
+        const count = result.symmetries.filter(sym => sym >= minSym).length;
+        option.text = `${label} (${count.toLocaleString()})`;
+    }
+}
+
+// Width available for drawing inside the list's padding.
+function contentWidth(): number {
+    const list = elements['maze-list'];
+    const style = getComputedStyle(list);
+    return Math.floor(list.clientWidth -
+        parseFloat(style.paddingLeft) - parseFloat(style.paddingRight));
+}
+
+function showError(message: string) {
+    elements.error.textContent = message;
+    elements.error.style.visibility = 'visible';
 }
 
 function bindElements(...eltNames: string[]): ElementBindings {

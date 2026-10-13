@@ -1,7 +1,10 @@
 export { MazeCanvas };
 
+// Walls are listed as in Maze (true or 1 = wall present).
+type Walls = ArrayLike<boolean | number>;
+
 class MazeCanvas {
-    walls: boolean[];
+    walls: Walls;
     rows: number;
     columns: number;
 
@@ -15,33 +18,33 @@ class MazeCanvas {
     cellStep: number = 0;
     mazeSize: [number, number] = [0, 0];
 
-    constructor(rows: number, columns: number, walls: boolean[]) {
+    constructor(rows: number, columns: number, walls: Walls) {
         this.rows = rows;
         this.columns = columns;
         this.walls = walls;
     }
 
-    setWalls(walls: boolean[]) {
+    setWalls(walls: Walls) {
         this.walls = walls;
     }
 
-    sizeFromWidth(width: number) {
+    // Size the maze to fit within width x height, scaling the wall
+    // thickness with the maze so walls stay visible when mazes are small.
+    scaleToFit(width: number, height: number) {
+        // With wallPadding = 2 * wallBorder and cells about 6 borders wide,
+        // a maze of n cells spans about (10n - 2) borders.
+        this.wallBorder = Math.max(1, Math.floor(Math.min(
+            width / (10 * this.columns - 2),
+            height / (10 * this.rows - 2))));
+        this.wallPadding = 2 * this.wallBorder;
+
         const outerSpace = 2 * this.wallBorder;
+        const innerSpace = 2 * this.wallBorder + this.wallPadding;
 
-        // Wall borders are doubled up with wallPadding is non-zero.
-        let innerSpace: number;
-        if (this.wallPadding === 0) {
-            innerSpace = this.wallBorder;
-        } else {
-            innerSpace = 2 * this.wallBorder + this.wallPadding;
-        }
-
-        // Determine the maximum cellSize that will fit in the given width:
-        // width = columns * cellSize + (columns - 1) * innerSpace + outerSpace
-        // so cellSize = (width - outerSpace - (columns - 1) * innerSpace) / columns
-        // or cellSize = (width - outerSpace + innerSpace) / columns - innerSpace
-
-        this.cellSize = Math.floor((width - outerSpace + innerSpace) / this.columns) - innerSpace;
+        // size = cells * cellSize + (cells - 1) * innerSpace + outerSpace
+        this.cellSize = Math.max(1, Math.floor(Math.min(
+            (width - outerSpace + innerSpace) / this.columns,
+            (height - outerSpace + innerSpace) / this.rows)) - innerSpace);
 
         this.mazeSize = [
             this.columns * this.cellSize + (this.columns - 1) * innerSpace + outerSpace,
@@ -49,8 +52,6 @@ class MazeCanvas {
         ];
 
         this.cellStep = this.cellSize + innerSpace;
-
-        console.log(`${width} => ${this.mazeSize} (${this.cellSize})`);
     }
 
     drawMaze(ctx: CanvasRenderingContext2D) {
