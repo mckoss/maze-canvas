@@ -122,17 +122,33 @@ There are 557,568,000 mazes of size 5x5.
 48 have 4-way symmetry.
 ```
 
-A currently unexplored sequence (not yet in the OEIS) is the count of *symmetric* mazes on an $n \times n$ grid:
+A sequence not yet in the OEIS is the count of *symmetric* mazes on an
+$n \times n$ grid, mapped to themselves by some rotation or reflection (and,
+as above, counted once per set of related mazes).  The exhaustive search counts
+them up to $5 \times 5$; an [analysis of symmetric mazes](analysis/symmetric-mazes.md)
+gives an exact closed form and extends the sequence (computed by
+[symmetric_mazes.py](analysis/symmetric_mazes.py)):
 
 | N | Symmetric Mazes | 2-symmetric | 4-symmetric |
 |---|---|---|---|
-| 1 | 1 | 1 | 1 |
+| 1 | 1 | - | 1* |
 | 2 | 1 | 1 | - |
 | 3 | 7 | 5 | 2 |
 | 4 | 112 | 112 | - |
 | 5 | 7,674 | 7,626 | 48 |
+| 6 | 1,140,480 | 1,140,480 | - |
+| 7 | 1,048,481,660 | 1,048,467,740 | 13,920 |
+| 8 | 1,156,572,053,504 | 1,156,572,053,504 | - |
+| 9 | 17,405,611,202,467,360 | 17,405,611,155,168,464 | 47,298,896 |
+| 10 | 120,400,947,062,415,360,000 | 120,400,947,062,415,360,000 | - |
+| 11 | 33,672,034,945,981,188,227,077,824 | 33,672,034,945,979,370,642,396,192 | 1,817,584,681,632 |
+| 12 | 1,303,113,477,212,940,680,191,121,817,600 | 1,303,113,477,212,940,680,191,121,817,600 | - |
 
-*Where a symmetry includes any reflection or rotation that maps the maze back to itself.*
+\* The single cell has all 8 symmetries.
+
+Even-sized mazes can only be mirror symmetric, about the line between the two
+middle columns (or rows); odd-sized mazes can also be rotationally symmetric.
+No maze is symmetric about a diagonal.
 
 # Using this Repo
 

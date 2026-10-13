@@ -30,11 +30,15 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm run coverage
+      # Recomputes the symmetric maze counts, checking them against the
+      # exhaustive counts, the product formulas and A349718.
+      - name: Check symmetric maze analysis
+        run: python3 analysis/symmetric_mazes.py 12
       # Publish only the site's files (not node_modules or coverage/).
       - name: Stage site
         run: |
           mkdir _site_src
-          cp -r README.md LICENSE maze-generator.html images scripts src styles _site_src/
+          cp -r README.md LICENSE maze-generator.html analysis images scripts src styles _site_src/
       - uses: actions/jekyll-build-pages@v1
         with:
           source: ./_site_src
