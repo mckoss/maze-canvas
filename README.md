@@ -7,9 +7,11 @@ This repo has two concerns:
 
 To view the formatted equations in this README - visit the hosted version here:
 
-http://mckoss.com/maze-canvas/
+https://mckoss.com/maze-canvas/
 
-[![Node.js CI](https://github.com/mckoss/maze-canvas/actions/workflows/main.yml/badge.svg)](https://github.com/mckoss/maze-canvas/actions/workflows/main.yml)
+Try the app: [Exhaustive Maze Generator](https://mckoss.com/maze-canvas/maze-generator.html)
+
+[![Build and deploy](https://github.com/mckoss/maze-canvas/actions/workflows/pages.yml/badge.svg)](https://github.com/mckoss/maze-canvas/actions/workflows/pages.yml)
 
 
 # Generating Mazes
@@ -69,7 +71,9 @@ unique mazes in Perl in 2015:
 
 He answers the question, *how many unique mazes are there if you don't double
 count rotations and reflections - up to 4x4 mazes* (extended
-to 6x6 mazes by Paul Kim in his [2019 Doctoral Thesis](https://etd.ohiolink.edu/apexprod/rws_etd/send_file/send?accession=osu1563286393237089&disposition=inline)):
+to 6x6 mazes by Paul Kim in his [2019 Doctoral Thesis](https://etd.ohiolink.edu/apexprod/rws_etd/send_file/send?accession=osu1563286393237089&disposition=inline)).
+This is OEIS sequence [A349718](https://oeis.org/A349718): the number of
+spanning trees of the $n \times n$ grid graph up to rotation and reflection:
 
 | N | Unique Mazes |
 |---|---|
