@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="579" height="336" viewBox="0 0 579 336">
+<rect width="100%" height="100%" rx="8" fill="#ffffff"/>
+<text x="128.0" y="30.0" font-size="13" fill="#24292f" text-anchor="middle" font-weight="bold" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">A quarter of the grid</text>
+<rect x="20.0" y="36.0" width="40.0" height="40.0" rx="4" fill="#ffebe9"/>
+<rect x="64.0" y="36.0" width="40.0" height="40.0" rx="4" fill="#ffebe9"/>
+<rect x="108.0" y="36.0" width="40.0" height="40.0" rx="4" fill="#ffebe9"/>
+<rect x="152.0" y="36.0" width="40.0" height="40.0" rx="4" fill="#ddf4ff"/>
+<rect x="196.0" y="36.0" width="40.0" height="40.0" rx="4" fill="#ddf4ff"/>
+<rect x="20.0" y="80.0" width="40.0" height="40.0" rx="4" fill="#ffebe9"/>
+<rect x="64.0" y="80.0" width="40.0" height="40.0" rx="4" fill="#ffebe9"/>
+<rect x="108.0" y="80.0" width="40.0" height="40.0" rx="4" fill="#ffebe9"/>
+<rect x="152.0" y="80.0" width="40.0" height="40.0" rx="4" fill="#ddf4ff"/>
+<rect x="196.0" y="80.0" width="40.0" height="40.0" rx="4" fill="#ddf4ff"/>
+<rect x="20.0" y="124.0" width="40.0" height="40.0" rx="4" fill="#fbefff"/>
+<rect x="64.0" y="124.0" width="40.0" height="40.0" rx="4" fill="#fbefff"/>
+<rect x="152.0" y="124.0" width="40.0" height="40.0" rx="4" fill="#ddf4ff"/>
+<rect x="196.0" y="124.0" width="40.0" height="40.0" rx="4" fill="#ddf4ff"/>
+<rect x="20.0" y="168.0" width="40.0" height="40.0" rx="4" fill="#fbefff"/>
+<rect x="64.0" y="168.0" width="40.0" height="40.0" rx="4" fill="#fbefff"/>
+<rect x="108.0" y="168.0" width="40.0" height="40.0" rx="4" fill="#dafbe1"/>
+<rect x="152.0" y="168.0" width="40.0" height="40.0" rx="4" fill="#dafbe1"/>
+<rect x="196.0" y="168.0" width="40.0" height="40.0" rx="4" fill="#dafbe1"/>
+<rect x="20.0" y="212.0" width="40.0" height="40.0" rx="4" fill="#fbefff"/>
+<rect x="64.0" y="212.0" width="40.0" height="40.0" rx="4" fill="#fbefff"/>
+<rect x="108.0" y="212.0" width="40.0" height="40.0" rx="4" fill="#dafbe1"/>
+<rect x="152.0" y="212.0" width="40.0" height="40.0" rx="4" fill="#dafbe1"/>
+<rect x="196.0" y="212.0" width="40.0" height="40.0" rx="4" fill="#dafbe1"/>
+<circle cx="40.0" cy="56.0" r="6" fill="#24292f"/>
+<circle cx="84.0" cy="56.0" r="6" fill="#24292f"/>
+<circle cx="128.0" cy="56.0" r="6" fill="#24292f"/>
+<text x="183.0" y="47.0" font-size="12" fill="#cf222e" text-anchor="middle" font-weight="bold" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">a</text>
+<circle cx="172.0" cy="56.0" r="6" fill="#afb8c1"/>
+<circle cx="216.0" cy="56.0" r="6" fill="#afb8c1"/>
+<text x="51.0" y="91.0" font-size="12" fill="#cf222e" text-anchor="middle" font-weight="bold" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">a</text>
+<circle cx="40.0" cy="100.0" r="6" fill="#24292f"/>
+<circle cx="84.0" cy="100.0" r="6" fill="#24292f"/>
+<text x="139.0" y="91.0" font-size="12" fill="#cf222e" text-anchor="middle" font-weight="bold" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">b</text>
+<circle cx="128.0" cy="100.0" r="6" fill="#24292f"/>
+<circle cx="172.0" cy="100.0" r="6" fill="#afb8c1"/>
+<circle cx="216.0" cy="100.0" r="6" fill="#afb8c1"/>
+<circle cx="40.0" cy="144.0" r="6" fill="#afb8c1"/>
+<text x="95.0" y="135.0" font-size="12" fill="#cf222e" text-anchor="middle" font-weight="bold" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">b</text>
+<circle cx="84.0" cy="144.0" r="6" fill="#afb8c1"/>
+<circle cx="128.0" cy="144.0" r="6" fill="#afb8c1"/>
+<circle cx="172.0" cy="144.0" r="6" fill="#afb8c1"/>
+<circle cx="216.0" cy="144.0" r="6" fill="#afb8c1"/>
+<circle cx="40.0" cy="188.0" r="6" fill="#afb8c1"/>
+<circle cx="84.0" cy="188.0" r="6" fill="#afb8c1"/>
+<circle cx="128.0" cy="188.0" r="6" fill="#afb8c1"/>
+<circle cx="172.0" cy="188.0" r="6" fill="#afb8c1"/>
+<circle cx="216.0" cy="188.0" r="6" fill="#afb8c1"/>
+<circle cx="40.0" cy="232.0" r="6" fill="#afb8c1"/>
+<circle cx="84.0" cy="232.0" r="6" fill="#afb8c1"/>
+<circle cx="128.0" cy="232.0" r="6" fill="#afb8c1"/>
+<circle cx="172.0" cy="232.0" r="6" fill="#afb8c1"/>
+<circle cx="216.0" cy="232.0" r="6" fill="#afb8c1"/>
+<line x1="128.0" y1="56.0" x2="172.0" y2="56.0" stroke="#cf222e" stroke-width="4" stroke-linecap="round"/>
+<line x1="84.0" y1="100.0" x2="84.0" y2="144.0" stroke="#cf222e" stroke-width="4" stroke-linecap="round"/>
+<circle cx="128.0" cy="144.0" r="11" fill="none" stroke="#24292f" stroke-width="2"/>
+<text x="128.0" y="272.0" font-size="12" fill="#57606a" text-anchor="middle" font-weight="normal" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">quarter turns carry the red block onto</text>
+<text x="128.0" y="288.0" font-size="12" fill="#57606a" text-anchor="middle" font-weight="normal" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">the others: cell a to a and b to b</text>
+<line x1="266.0" y1="144.0" x2="296.0" y2="144.0" stroke="#57606a" stroke-width="2.5" stroke-linecap="round"/>
+<path d="M292.0,138.0 L302.0,144.0 L292.0,150.0" fill="none" stroke="#57606a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="404.8" y="30.0" font-size="13" fill="#24292f" text-anchor="middle" font-weight="bold" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">Quotient graph (GridR4Adj)</text>
+<line x1="360.8" y1="89.0" x2="404.8" y2="89.0" stroke="#24292f" stroke-width="4" stroke-linecap="round"/>
+<line x1="360.8" y1="89.0" x2="360.8" y2="133.0" stroke="#24292f" stroke-width="4" stroke-linecap="round"/>
+<line x1="404.8" y1="89.0" x2="448.8" y2="89.0" stroke="#24292f" stroke-width="4" stroke-linecap="round"/>
+<line x1="404.8" y1="89.0" x2="404.8" y2="133.0" stroke="#24292f" stroke-width="4" stroke-linecap="round"/>
+<line x1="448.8" y1="89.0" x2="448.8" y2="133.0" stroke="#24292f" stroke-width="4" stroke-linecap="round"/>
+<line x1="360.8" y1="133.0" x2="404.8" y2="133.0" stroke="#24292f" stroke-width="4" stroke-linecap="round"/>
+<line x1="404.8" y1="133.0" x2="448.8" y2="133.0" stroke="#24292f" stroke-width="4" stroke-linecap="round"/>
+<circle cx="360.8" cy="89.0" r="6" fill="#24292f"/>
+<circle cx="404.8" cy="89.0" r="6" fill="#24292f"/>
+<circle cx="448.8" cy="89.0" r="6" fill="#24292f"/>
+<circle cx="360.8" cy="133.0" r="6" fill="#24292f"/>
+<circle cx="404.8" cy="133.0" r="6" fill="#24292f"/>
+<circle cx="448.8" cy="133.0" r="6" fill="#24292f"/>
+<path d="M448.8,89.0 L448.8,72.6 Q448.8,62.6 438.8,62.6 L344.4,62.6 Q334.4,62.6 334.4,72.6 L334.4,123.0 Q334.4,133.0 344.4,133.0 L360.8,133.0" fill="none" stroke="#cf222e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="322.4" y="115.0" font-size="12" fill="#cf222e" text-anchor="middle" font-weight="bold" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">a</text>
+<path d="M404.8,133.0 Q426.8,166.0 448.8,133.0" fill="none" stroke="#cf222e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="430.8" y="175.2" font-size="12" fill="#cf222e" text-anchor="end" font-weight="normal" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">b (a double edge)</text>
+<line x1="448.8" y1="133.0" x2="448.8" y2="177.0" stroke="#afb8c1" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 6"/>
+<circle cx="448.8" cy="177.0" r="6" fill="#afb8c1"/>
+<circle cx="448.8" cy="177.0" r="11" fill="none" stroke="#afb8c1" stroke-width="2"/>
+<text x="468.8" y="181.0" font-size="12" fill="#57606a" text-anchor="start" font-weight="normal" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">center: a leaf,</text>
+<text x="468.8" y="197.0" font-size="12" fill="#57606a" text-anchor="start" font-weight="normal" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">left out</text>
+<circle cx="360.8" cy="89.0" r="6" fill="#24292f"/>
+<circle cx="404.8" cy="89.0" r="6" fill="#24292f"/>
+<circle cx="448.8" cy="89.0" r="6" fill="#24292f"/>
+<circle cx="360.8" cy="133.0" r="6" fill="#24292f"/>
+<circle cx="404.8" cy="133.0" r="6" fill="#24292f"/>
+<circle cx="448.8" cy="133.0" r="6" fill="#24292f"/>
+<text x="289.4" y="316.0" font-size="13" fill="#57606a" text-anchor="middle" font-weight="normal" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">Its spanning trees ↔ mazes fixed by a quarter turn (c = 60 for n = 5)</text>
+</svg>

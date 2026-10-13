@@ -34,6 +34,8 @@ jobs:
       # exhaustive counts, the product formulas and A349718.
       - name: Check symmetric maze analysis
         run: python3 analysis/symmetric_mazes.py 12
+      - name: Check CALCULATION.md diagrams are up to date
+        run: python3 analysis/draw_diagrams.py && git diff --exit-code images/
       # Publish only the site's files (not node_modules or coverage/).
       - name: Stage site
         run: |

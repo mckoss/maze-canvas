@@ -66,6 +66,11 @@ There are 557,568,000 mazes of size 5x5.
 48 have 4-way symmetry.           (orbits of 2)
 ```
 
+For $3 \times 3$ these are the 28 unique mazes (the example in the A349718
+entry), each shown by its canonical member:
+
+![The 28 unique 3x3 mazes: 21 asymmetric, 5 with 2-way symmetry (3 mirror, 2 half turn) and 2 with 4-way symmetry (a cross and a pinwheel)](images/calc-3x3-mazes.svg)
+
 Since every maze is visited, the time grows with the number of mazes: about
 2 seconds for the 100,352 mazes of size $4 \times 4$, and hours for the
 557,568,000 of size $5 \times 5$.  The $6 \times 6$ grid has over $3 \times
@@ -136,7 +141,9 @@ For $n = 3$: $(192 + 2 \cdot 8 + 12 + 2 \cdot 2) / 8 = 28$.
 The A349718 entry links a
 [PARI/GP program](https://oeis.org/A349718/a349718.txt) by Andrew Howroyd
 (2021) that computes the sequence this way, to $n = 40$.  Here is how it
-works, quoting its code.
+works, quoting its code.  The diagrams redraw the ASCII sketches in its
+comments; they are generated, and their graphs checked, by
+[analysis/draw_diagrams.py](analysis/draw_diagrams.py).
 
 **Spanning trees from an adjacency matrix.**  This is Kirchhoff's theorem
 directly: `vecsum(Vec(M))` sums the columns of the adjacency matrix $M$ to
@@ -181,8 +188,10 @@ trigonometry is needed.
 
 **Even $n$: middle reflections.**  These fix $n \cdot \tau(n, n/2)$ mazes
 each, so the program uses `n*SpanningTreeCount(GridAdj(n,n/2))` per
-reflection.  Its comment illustrates the construction for $n = 4$: a tree on
-the $4 \times 2$ half, mirrored, joined by one of 4 crossing passages.
+reflection.  For $n = 4$: a maze on the $4 \times 2$ half, mirrored, and joined
+by one of the 4 passages that cross the mirror line.
+
+![A maze on the 4x2 half, its mirror image, the two joined by one of 4 crossing passages, and the resulting maze](images/calc-even-mirror.svg)
 
 **Odd $n$: middle reflections.**  A maze fixed by the reflection through the
 middle column must include every passage along that column (the
@@ -201,7 +210,10 @@ GridRefAdj(m,n) = {
 ```
 
 The extra vertex has index $nm$, so its row is $n$, and `iy+jy==2*n-1` joins it
-to row $n - 1$.
+to row $n - 1$.  For $n = 3$, a spanning tree of `GridRefAdj` becomes a maze by
+opening the corridor and mirroring:
+
+![A spanning tree of 3 cells plus a corridor vertex, the corridor opened into the middle column, mirrored, and the resulting 3x3 maze](images/calc-odd-mirror.svg)
 
 **Odd $n$: half turn.**  The center cell is the only cell or passage a
 half turn maps to itself, so a maze it fixes is made of pairs of passages
@@ -213,7 +225,10 @@ since the center is fixed.  `GridR2Adj(n)` (called with $\lfloor n/2 \rfloor$)
 builds the quotient from the top half of the grid: $\lfloor n/2 \rfloor$
 full rows, plus the middle row's cells up to and including the center.  The
 passages leading down into the missing right half of the middle row are joined
-instead to its rotated copy, the left half (`ix+jx==m-1`).
+instead to its rotated copy, the left half (`ix+jx==m-1`).  For $n = 5$ those
+are the two red passages, $a$ and $b$:
+
+![Left: the half of the 5x5 grid used for the quotient, with two passages leading into the right half of the middle row. Right: the quotient graph, where those passages wrap around to the left half of the middle row](images/calc-half-turn.svg)
 
 ```
 GridR2Adj(n) = {
@@ -230,7 +245,10 @@ The center cell is left out: its four neighbours form a single orbit, so in
 the quotient it would be a leaf, which doesn't change the number of spanning
 trees.  At the corner of the block beside the center, two different orbits of passages join the same
 two orbits of cells, so the quotient has a double edge, which is why the adjacency matrix *adds* its
-terms (`+`) instead of using `||`.
+terms (`+`) instead of using `||`.  For $n = 5$ (drawn as 2 rows of 3; the
+program lays the same block out as 3 rows of 2):
+
+![Left: the 5x5 grid split into four 2x3 blocks around the center, with two passages leaving the first block. Right: the quotient graph on that block, with one passage wrapping around and one forming a double edge, and the center as a leaf that is left out](images/calc-quarter-turn.svg)
 
 ```
 GridR4Adj(n) = {
